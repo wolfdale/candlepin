@@ -193,7 +193,7 @@ public class OwnerProductResource {
     }
 
     @ApiOperation(notes = "Retrieves a list of Products", value = "List Products for an Owner",
-        response = Product.class, responseContainer = "list")
+        response = Product.class, responseContainer = "list", nickname = "listOwnerProducts")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public CandlepinQuery<ProductDTO> listProducts(
@@ -209,7 +209,7 @@ public class OwnerProductResource {
         return this.translator.translateQuery(query, ProductDTO.class);
     }
 
-    @ApiOperation(notes = "Retrieves a single Product", value = "getProduct")
+    @ApiOperation(notes = "Retrieves a single Product", value = "getProduct", nickname = "getOwnerProduct")
     @ApiResponses({ @ApiResponse(code = 404, message = "") })
     @GET
     @Path("/{product_id}")
@@ -224,7 +224,8 @@ public class OwnerProductResource {
         return this.translator.translate(product, ProductDTO.class);
     }
 
-    @ApiOperation(notes = "Retrieves a Certificate for a Product", value = "getProductCertificate")
+    @ApiOperation(notes = "Retrieves a Certificate for a Product", value = "getProductCertificate",
+        nickname = "getOwnerProductCertificate")
     @ApiResponses({ @ApiResponse(code = 404, message = "") })
     @GET
     @Path("/{product_id}/certificate")
@@ -247,7 +248,7 @@ public class OwnerProductResource {
     }
 
     @ApiOperation(notes = "Creates a Product.  Returns either the new created Product or " +
-        "the Product that already existed.", value = "createProduct")
+        "the Product that already existed.", value = "createProduct", nickname = "createOwnerProduct")
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
@@ -262,7 +263,7 @@ public class OwnerProductResource {
         return this.translator.translate(entity, ProductDTO.class);
     }
 
-    @ApiOperation(notes = "Updates a Product", value = "updateProduct")
+    @ApiOperation(notes = "Updates a Product", value = "updateProduct", nickname = "updateOwnerProduct")
     @ApiResponses({ @ApiResponse(code = 400, message = "") })
     @PUT
     @Path("/{product_id}")
@@ -302,7 +303,8 @@ public class OwnerProductResource {
         return this.translator.translate(updated, ProductDTO.class);
     }
 
-    @ApiOperation(notes = "Adds one or more Content entities to a Product", value = "addBatchContent")
+    @ApiOperation(notes = "Adds one or more Content entities to a Product", value = "addBatchContent",
+        nickname = "addOwnerProductBatchContent")
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -356,7 +358,8 @@ public class OwnerProductResource {
         return this.translator.translate(product, ProductDTO.class);
     }
 
-    @ApiOperation(notes = "Adds a single Content to a Product", value = "addContent")
+    @ApiOperation(notes = "Adds a single Content to a Product", value = "addContent",
+        nickname = "addOwnerProductContent")
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.WILDCARD)
@@ -374,7 +377,8 @@ public class OwnerProductResource {
     }
 
 
-    @ApiOperation(notes = "Adds one or more Content entities to a Product", value = "addBatchContent")
+    @ApiOperation(notes = "Deletes one or more Content entities to a Product", value = "deleteBatchContent",
+        nickname = "deleteOwnerProductBatchContent")
     @DELETE
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -419,7 +423,8 @@ public class OwnerProductResource {
         return this.translator.translate(product, ProductDTO.class);
     }
 
-    @ApiOperation(notes = "Removes a single Content from a Product", value = "removeContent")
+    @ApiOperation(notes = "Removes a single Content from a Product", value = "removeContent",
+        nickname = "removeOwnerProductContent")
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/{product_id}/content/{content_id}")
@@ -433,7 +438,7 @@ public class OwnerProductResource {
         return this.removeBatchContent(ownerKey, productId, Collections.<String>singletonList(contentId));
     }
 
-    @ApiOperation(notes = "Removes a Product", value = "deleteProduct")
+    @ApiOperation(notes = "Removes a Product", value = "deleteProduct", nickname = "deleteOwnerProduct")
     @ApiResponses({ @ApiResponse(code = 400, message = ""), @ApiResponse(code = 404, message = "") })
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
@@ -458,7 +463,8 @@ public class OwnerProductResource {
         this.productManager.removeProduct(owner, product);
     }
 
-    @ApiOperation(notes = "Refreshes Pools by Product", value = "refreshPoolsForProduct")
+    @ApiOperation(notes = "Refreshes Pools by Product", value = "refreshPoolsForProduct",
+        nickname = "refreshPoolsForOwnerProduct")
     @PUT
     @Path("/{product_id}/subscriptions")
     @Produces(MediaType.APPLICATION_JSON)
