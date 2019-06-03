@@ -159,6 +159,7 @@ dependencies {
     implementation libraries.swagger
     implementation libraries.validator
     implementation libraries.javax_validation
+    implementation libraries.qpid
 
     // Hibernate
     implementation "org.hibernate:hibernate-core:5.4.9.Final"
