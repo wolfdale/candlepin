@@ -12,7 +12,7 @@
  * granted to use or replicate Red Hat trademarks that are incorporated
  * in this software or its documentation.
  */
-package org.candlepin.policy.js.entitlement;
+package org.candlepin.policy.entitlement;
 
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyBoolean;
