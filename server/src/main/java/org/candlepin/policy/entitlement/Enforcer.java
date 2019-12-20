@@ -12,7 +12,7 @@
  * granted to use or replicate Red Hat trademarks that are incorporated
  * in this software or its documentation.
  */
-package org.candlepin.policy.js.entitlement;
+package org.candlepin.policy.entitlement;
 
 import org.candlepin.bind.PoolOperationCallback;
 import org.candlepin.controller.PoolManager;
@@ -148,11 +148,10 @@ public interface Enforcer {
     /**
      * Run post-entitlement actions.
      *
-     * @param c the consumer to unbind on
      * @param poolManager
-     * @param ent The entitlement that needs to be revoked
+     * @param entitlement The entitlement that needs to be revoked
      */
-    void postUnbind(Consumer c, PoolManager poolManager, Entitlement ent);
+    void postUnbind(PoolManager poolManager, Entitlement entitlement);
 
     ValidationResult update(Consumer consumer, Entitlement entitlement, Integer change);
 

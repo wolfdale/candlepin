@@ -12,7 +12,7 @@
  * granted to use or replicate Red Hat trademarks that are incorporated
  * in this software or its documentation.
  */
-package org.candlepin.policy.js.entitlement;
+package org.candlepin.policy.entitlement;
 
 import org.candlepin.bind.PoolOperationCallback;
 import org.candlepin.config.ConfigProperties;
@@ -162,7 +162,7 @@ public class PostEntitlementRulesTest extends EntitlementRulesTestFixture {
         verify(poolManagerMock, never()).createPools(any(List.class));
         verify(poolManagerMock, never()).setPoolQuantity(any(Pool.class), anyInt());
 
-        enforcer.postUnbind(consumer, poolManagerMock, e);
+        enforcer.postUnbind(poolManagerMock, e);
         verify(poolManagerMock, never()).setPoolQuantity(any(Pool.class), anyInt());
         verify(poolManagerMock, never()).setPoolQuantity(any(Pool.class), anyLong());
     }
@@ -184,7 +184,7 @@ public class PostEntitlementRulesTest extends EntitlementRulesTestFixture {
         verify(poolManagerMock, never()).createPools(any(List.class));
         verify(poolManagerMock, never()).setPoolQuantity(any(Pool.class), anyInt());
 
-        enforcer.postUnbind(consumer, poolManagerMock, e);
+        enforcer.postUnbind(poolManagerMock, e);
         verify(poolManagerMock, never()).setPoolQuantity(any(Pool.class), anyInt());
         verify(poolManagerMock, never()).setPoolQuantity(any(Pool.class), anyLong());
     }

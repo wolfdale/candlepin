@@ -12,42 +12,26 @@
  * granted to use or replicate Red Hat trademarks that are incorporated
  * in this software or its documentation.
  */
-package org.candlepin.policy.js.entitlement;
+package org.candlepin.policy.entitlement;
 
-import org.candlepin.audit.EventFactory;
-import org.candlepin.audit.EventSink;
 import org.candlepin.bind.PoolOperationCallback;
 import org.candlepin.common.config.Configuration;
 import org.candlepin.config.ConfigProperties;
 import org.candlepin.controller.PoolManager;
-import org.candlepin.controller.ProductManager;
-import org.candlepin.dto.ModelTranslator;
-import org.candlepin.dto.rules.v1.ConsumerDTO;
-import org.candlepin.dto.rules.v1.EntitlementDTO;
-import org.candlepin.dto.rules.v1.PoolDTO;
 import org.candlepin.model.Consumer;
 import org.candlepin.model.ConsumerCurator;
 import org.candlepin.model.ConsumerType;
 import org.candlepin.model.ConsumerTypeCurator;
 import org.candlepin.model.Entitlement;
 import org.candlepin.model.Owner;
-import org.candlepin.model.OwnerCurator;
-import org.candlepin.model.OwnerProductCurator;
 import org.candlepin.model.Pool;
 import org.candlepin.model.PoolQuantity;
 import org.candlepin.model.Product;
 import org.candlepin.model.ProductCurator;
-import org.candlepin.policy.ValidationError;
 import org.candlepin.policy.ValidationResult;
-import org.candlepin.policy.ValidationWarning;
-import org.candlepin.policy.js.JsRunner;
-import org.candlepin.policy.js.JsonJsContext;
-import org.candlepin.policy.js.RuleExecutionException;
-import org.candlepin.policy.js.RulesObjectMapper;
 import org.candlepin.policy.js.pool.PoolHelper;
 import org.candlepin.util.DateSource;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.inject.Inject;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -55,11 +39,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xnap.commons.i18n.I18n;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -67,57 +48,36 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+
+import static org.candlepin.policy.entitlement.PoolValidator.*;
+
 
 /**
  * Enforces entitlement rules for normal (non-manifest) consumers.
  */
 public class EntitlementRules implements Enforcer {
+
     private static final Logger log = LoggerFactory.getLogger(EntitlementRules.class);
 
     private DateSource dateSource;
 
     private I18n i18n;
-    private JsRunner jsRules;
     private Configuration config;
     private ConsumerCurator consumerCurator;
     private ConsumerTypeCurator consumerTypeCurator;
     private ProductCurator productCurator;
-    private RulesObjectMapper objectMapper;
-    private OwnerCurator ownerCurator;
-    private OwnerProductCurator ownerProductCurator;
-    private ProductManager productManager;
-    private EventSink eventSink;
-    private EventFactory eventFactory;
-    private ModelTranslator translator;
-
-    private static final String POST_PREFIX = "post_";
 
     @Inject
-    public EntitlementRules(DateSource dateSource,
-        JsRunner jsRules, I18n i18n, Configuration config, ConsumerCurator consumerCurator,
-        ConsumerTypeCurator consumerTypeCurator, ProductCurator productCurator, RulesObjectMapper mapper,
-        OwnerCurator ownerCurator, OwnerProductCurator ownerProductCurator,
-        ProductManager productManager, EventSink eventSink,
-        EventFactory eventFactory, ModelTranslator translator) {
+    public EntitlementRules(DateSource dateSource, I18n i18n, Configuration config,
+        ConsumerCurator consumerCurator, ConsumerTypeCurator consumerTypeCurator,
+        ProductCurator productCurator) {
 
-        this.jsRules = jsRules;
         this.dateSource = dateSource;
         this.i18n = i18n;
         this.config = config;
         this.consumerCurator = consumerCurator;
         this.consumerTypeCurator = consumerTypeCurator;
         this.productCurator = productCurator;
-        this.objectMapper = mapper;
-        this.ownerCurator = ownerCurator;
-        this.ownerProductCurator = ownerProductCurator;
-        this.productManager = productManager;
-        this.eventSink = eventSink;
-        this.eventFactory = eventFactory;
-        this.translator = translator;
-
-        jsRules.init("entitlement_name_space");
     }
 
     @Override
@@ -154,44 +114,39 @@ public class EntitlementRules implements Enforcer {
 
         Map<String, ValidationResult> resultMap = new HashMap<>();
 
-        ConsumerType ctype = this.consumerTypeCurator.getConsumerType(consumer);
-
         /* This document describes the java script portion of the pre entitlement rules check:
          * http://www.candlepinproject.org/docs/candlepin/pre_entitlement_rules_check.html
          */
-        Stream<EntitlementDTO> entStream = consumer.getEntitlements() == null ? Stream.empty() :
-            consumer.getEntitlements().stream()
-                .map(this.translator.getStreamMapper(Entitlement.class, EntitlementDTO.class));
 
+        ConsumerType ctype = this.consumerTypeCurator.getConsumerType(consumer);
 
-        JsonJsContext args = new JsonJsContext(objectMapper);
-        args.put("consumer", this.translator.translate(consumer, ConsumerDTO.class));
-        args.put("hostConsumer", this.translator.translate(host, ConsumerDTO.class));
-        args.put("consumerEntitlements", entStream.collect(Collectors.toSet()));
-        args.put("standalone", config.getBoolean(ConfigProperties.STANDALONE));
-        args.put("poolQuantities", entitlementPoolQuantities);
-        args.put("caller", caller.getLabel());
-        args.put("log", log, false);
+        for (PoolQuantity poolQuantity : entitlementPoolQuantities) {
+            Pool pool = poolQuantity.getPool();
+            int quantity = poolQuantity.getQuantity();
+            PoolValidationData validationData = new PoolValidationData.Builder()
+                .setCaller(caller)
+                .setConsumer(consumer)
+                .setConsumerType(ctype)
+                .setPool(pool)
+                .setQuantity(quantity)
+                .setHostConsumer(host)
+                .build();
 
-        String json = jsRules.runJsFunction(String.class, "validate_pools_batch", args);
-
-        TypeReference<Map<String, ValidationResult>> typeref =
-            new TypeReference<Map<String, ValidationResult>>() {};
-        try {
-            resultMap = objectMapper.toObject(json, typeref);
-            for (PoolQuantity poolQuantity : entitlementPoolQuantities) {
-                if (!resultMap.containsKey(poolQuantity.getPool().getId())) {
-                    resultMap.put(poolQuantity.getPool().getId(), new ValidationResult());
-                    log.info("no result returned for pool: {}", poolQuantity.getPool());
+            ValidationResult result = new ValidationResult();
+            for (PoolValidator validator: PoolValidator.values()) {
+                if (pool.hasMergedAttribute(validator.getAttributeKey()) || validator == GLOBAL) {
+                    validator.validate(validationData, result);
                 }
-
             }
-        }
-        catch (Exception e) {
-            throw new RuleExecutionException(e);
+            resultMap.put(pool.getId(), result);
         }
 
         for (PoolQuantity poolQuantity : entitlementPoolQuantities) {
+            if (!resultMap.containsKey(poolQuantity.getPool().getId())) {
+                resultMap.put(poolQuantity.getPool().getId(), new ValidationResult());
+                log.info("no result returned for pool: {}", poolQuantity.getPool());
+            }
+
             finishValidation(resultMap.get(poolQuantity.getPool().getId()),
                 poolQuantity.getPool(), poolQuantity.getQuantity());
         }
@@ -202,35 +157,28 @@ public class EntitlementRules implements Enforcer {
     @Override
     @SuppressWarnings("checkstyle:indentation")
     public List<Pool> filterPools(Consumer consumer, List<Pool> pools, boolean showAll) {
-        JsonJsContext args = new JsonJsContext(objectMapper);
         Map<String, ValidationResult> resultMap = new HashMap<>();
 
         ConsumerType ctype = this.consumerTypeCurator.getConsumerType(consumer);
 
-        Stream<PoolDTO> poolStream = pools == null ? Stream.empty() :
-            pools.stream().map(this.translator.getStreamMapper(Pool.class, PoolDTO.class));
+        for (Pool pool : pools) {
+            int quantity = 1;
+            PoolValidationData validationData = new PoolValidationData.Builder()
+                .setCaller(CallerType.LIST_POOLS)
+                .setConsumer(consumer)
+                .setConsumerType(ctype)
+                .setPool(pool)
+                .setQuantity(quantity)
+                .setHostConsumer(getHost(consumer))
+                .build();
 
-        Stream<EntitlementDTO> entStream = consumer.getEntitlements() == null ? Stream.empty() :
-            consumer.getEntitlements().stream()
-                .map(this.translator.getStreamMapper(Entitlement.class, EntitlementDTO.class));
-
-        args.put("consumer", this.translator.translate(consumer, ConsumerDTO.class));
-        args.put("hostConsumer", this.translator.translate(getHost(consumer), ConsumerDTO.class));
-        args.put("consumerEntitlements", entStream.collect(Collectors.toSet()));
-        args.put("standalone", config.getBoolean(ConfigProperties.STANDALONE));
-        args.put("pools", poolStream.collect(Collectors.toSet()));
-        args.put("caller", CallerType.LIST_POOLS.getLabel());
-        args.put("log", log, false);
-
-        String json = jsRules.runJsFunction(String.class, "validate_pools_list", args);
-        TypeReference<Map<String, ValidationResult>> typeref =
-            new TypeReference<Map<String, ValidationResult>>() {};
-
-        try {
-            resultMap = objectMapper.toObject(json, typeref);
-        }
-        catch (Exception e) {
-            throw new RuleExecutionException(e);
+            ValidationResult result = new ValidationResult();
+            for (PoolValidator validator: PoolValidator.values()) {
+                if (pool.hasMergedAttribute(validator.getAttributeKey()) || validator == GLOBAL) {
+                    validator.validate(validationData, result);
+                }
+            }
+            resultMap.put(pool.getId(), result);
         }
 
         List<Pool> filteredPools = new LinkedList<>();
@@ -266,9 +214,10 @@ public class EntitlementRules implements Enforcer {
     public void finishValidation(ValidationResult result, Pool pool, Integer quantity) {
         validatePoolQuantity(result, pool, quantity);
         if (pool.isExpired(dateSource)) {
-            result.addError(new ValidationError(i18n.tr("Subscriptions for {0} expired on: {1}",
+            result.addError(i18n.tr("Unable to attach subscription for the product \"{0}\": Subscriptions " +
+                "for {0} expired on: {1}",
                 pool.getProductId(),
-                pool.getEndDate())));
+                pool.getEndDate()));
         }
     }
 
@@ -283,8 +232,7 @@ public class EntitlementRules implements Enforcer {
             // multi ent check
             if (!"yes".equalsIgnoreCase(pool.getProductAttributeValue(Pool.Attributes.MULTI_ENTITLEMENT)) &&
                 entitlement.getQuantity() + change > 1) {
-                result.addError(new ValidationError(
-                    EntitlementRulesTranslator.PoolErrorKeys.MULTI_ENTITLEMENT_UNSUPPORTED));
+                result.addError(EntitlementRulesTranslator.ErrorKeys.MULTI_ENTITLEMENT_UNSUPPORTED);
             }
             if (!consumer.isGuest()) {
                 String multiplier = pool.getProductAttributeValue(Product.Attributes.INSTANCE_MULTIPLIER);
@@ -292,9 +240,7 @@ public class EntitlementRules implements Enforcer {
                     int instanceMultiplier = Integer.parseInt(multiplier);
                     // quantity should be divisible by multiplier
                     if ((entitlement.getQuantity() + change) % instanceMultiplier != 0) {
-                        result.addError(new ValidationError(
-                            EntitlementRulesTranslator.PoolErrorKeys.QUANTITY_MISMATCH
-                        ));
+                        result.addError(EntitlementRulesTranslator.ErrorKeys.QUANTITY_MISMATCH);
                     }
                 }
             }
@@ -304,200 +250,12 @@ public class EntitlementRules implements Enforcer {
         return result;
     }
 
-    public List<Rule> rulesForAttributes(Set<String> attributes,
-        Map<String, Set<Rule>> rules) {
-        Set<Rule> possibleMatches = new HashSet<>();
-        for (String attribute : attributes) {
-            if (rules.containsKey(attribute)) {
-                possibleMatches.addAll(rules.get(attribute));
-            }
-        }
-
-        List<Rule> matches = new LinkedList<>();
-        for (Rule rule : possibleMatches) {
-            if (attributes.containsAll(rule.getAttributes())) {
-                matches.add(rule);
-            }
-        }
-
-        // Always run the global rule, and run it first
-        matches.add(new Rule("global", 0, new HashSet<>()));
-
-        Collections.sort(matches, new RuleOrderComparator());
-        return matches;
-    }
-
-    public Map<String, Set<Rule>> parseAttributeMappings(String mappings) {
-        Map<String, Set<Rule>> toReturn = new HashMap<>();
-        if (mappings.trim().isEmpty()) {
-            return toReturn;
-        }
-
-        String[] separatedMappings = mappings.split(",");
-
-        for (String mapping : separatedMappings) {
-            Rule rule = parseRule(mapping);
-            for (String attribute : rule.getAttributes()) {
-                if (!toReturn.containsKey(attribute)) {
-                    toReturn.put(attribute, new HashSet<>(Collections.singletonList(rule)));
-                }
-
-                toReturn.get(attribute).add(rule);
-            }
-        }
-
-        return toReturn;
-    }
-
-    public Rule parseRule(String toParse) {
-        String[] tokens = toParse.split(":");
-
-        if (tokens.length < 3) {
-            throw new IllegalArgumentException(
-                i18n.tr("\"{0}\" Should contain name, priority and at least one attribute", toParse));
-        }
-
-        Set<String> attributes = new HashSet<>();
-        for (int i = 2; i < tokens.length; i++) {
-            attributes.add(tokens[i].trim());
-        }
-
-        try {
-            return new Rule(tokens[0].trim(), Integer.parseInt(tokens[1]),
-                attributes);
-        }
-        catch (NumberFormatException e) {
-            throw new IllegalArgumentException(i18n.tr(
-                "second parameter should be the priority number.", e));
-        }
-    }
-
-    protected void callPostEntitlementRules(List<Rule> matchingRules) {
-        for (Rule rule : matchingRules) {
-            jsRules.invokeRule(POST_PREFIX + rule.getRuleName());
-        }
-    }
-
-    protected void callPostUnbindRules(List<Rule> matchingRules) {
-        for (Rule rule : matchingRules) {
-            jsRules.invokeRule(POST_PREFIX + rule.getRuleName());
-        }
-    }
-
-
     // Always ensure that we do not over consume.
     // FIXME for auto sub stacking, we need to be able to pull across multiple
     // pools eventually, so this would need to go away in that case
-    protected void validatePoolQuantity(ValidationResult result, Pool pool,
-        int quantity) {
+    protected void validatePoolQuantity(ValidationResult result, Pool pool, int quantity) {
         if (!pool.entitlementsAvailable(quantity)) {
-            result.addError(EntitlementRulesTranslator.PoolErrorKeys.NO_ENTITLEMENTS_AVAILABLE);
-        }
-    }
-
-    /**
-     * RuleOrderComparator
-     */
-    public static class RuleOrderComparator implements Comparator<Rule>, Serializable {
-        private static final long serialVersionUID = 7602679645721757886L;
-
-        @Override
-        public int compare(Rule o1, Rule o2) {
-            return Integer.valueOf(o2.getOrder()).compareTo(
-                Integer.valueOf(o1.getOrder()));
-        }
-    }
-
-    /**
-     * Rule represents a core concept in Candlepin which is a business rule used
-     * to determine system compliance as well as entitlement eligibility for a
-     * particular consumer.
-     */
-    public static class Rule {
-        private final String ruleName;
-        private final int order;
-        private final Set<String> attributes;
-
-        public Rule(String ruleName, int order, Set<String> attributes) {
-            this.ruleName = ruleName;
-            this.order = order;
-            this.attributes = attributes;
-        }
-
-        public String getRuleName() {
-            return ruleName;
-        }
-
-        public int getOrder() {
-            return order;
-        }
-
-        public Set<String> getAttributes() {
-            return attributes;
-        }
-
-        @Override
-        public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result +
-                ((attributes == null) ? 0 : attributes.hashCode());
-            result = prime * result + order;
-            result = prime * result +
-                ((ruleName == null) ? 0 : ruleName.hashCode());
-            return result;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (obj == null) {
-                return false;
-            }
-            if (getClass() != obj.getClass()) {
-                return false;
-            }
-
-            Rule other = (Rule) obj;
-            if (attributes == null) {
-                if (other.attributes != null) {
-                    return false;
-                }
-            }
-            else if (!attributes.equals(other.attributes)) {
-                return false;
-            }
-            if (order != other.order) {
-                return false;
-            }
-            if (ruleName == null) {
-                if (other.ruleName != null) {
-                    return false;
-                }
-            }
-            else if (!ruleName.equals(other.ruleName)) {
-                return false;
-            }
-            return true;
-        }
-
-        public String toString() {
-            return "'" + ruleName + "':" + order + ":" + attributes.toString();
-        }
-    }
-
-    protected void runPostUnbind(PoolManager poolManager, Entitlement entitlement) {
-        Pool pool = entitlement.getPool();
-
-        // Can this attribute appear on pools?
-        if (pool.hasAttribute(Product.Attributes.VIRT_LIMIT) ||
-            pool.getProduct().hasAttribute(Product.Attributes.VIRT_LIMIT)) {
-
-            Map<String, String> attributes = PoolHelper.getFlattenedAttributes(pool);
-            Consumer c = entitlement.getConsumer();
-            postUnbindVirtLimit(poolManager, entitlement, pool, c, attributes);
+            result.addError(EntitlementRulesTranslator.ErrorKeys.NO_ENTITLEMENTS_AVAILABLE);
         }
     }
 
@@ -763,19 +521,16 @@ public class EntitlementRules implements Enforcer {
         return poolOperationCallback;
     }
 
-    public void postUnbind(Consumer c, PoolManager poolManager, Entitlement ent) {
-        runPostUnbind(poolManager, ent);
-    }
+    public void postUnbind(PoolManager poolManager, Entitlement entitlement) {
+        Pool pool = entitlement.getPool();
 
-    protected void logResult(ValidationResult result) {
-        if (log.isDebugEnabled()) {
-            for (ValidationError error : result.getErrors()) {
-                log.debug("  Rule error: {}", error.getResourceKey());
-            }
+        // Can this attribute appear on pools?
+        if (pool.hasAttribute(Product.Attributes.VIRT_LIMIT) ||
+            pool.getProduct().hasAttribute(Product.Attributes.VIRT_LIMIT)) {
 
-            for (ValidationWarning warning : result.getWarnings()) {
-                log.debug("  Rule warning: {}", warning.getResourceKey());
-            }
+            Map<String, String> attributes = PoolHelper.getFlattenedAttributes(pool);
+            Consumer c = entitlement.getConsumer();
+            postUnbindVirtLimit(poolManager, entitlement, pool, c, attributes);
         }
     }
 }
