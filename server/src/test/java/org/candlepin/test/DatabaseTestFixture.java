@@ -220,7 +220,7 @@ public class DatabaseTestFixture {
         this.injector.injectMembers(this);
 
         dateSource = (DateSourceForTesting) injector.getInstance(DateSource.class);
-        dateSource.currentDate(TestDateUtil.date(2010, 1, 1));
+        dateSource.currentDate(TestUtil.datePlusYears(new Date(), -1));
 
         HttpServletRequest req = parentInjector.getInstance(HttpServletRequest.class);
         when(req.getAttribute("username")).thenReturn("mock_user");

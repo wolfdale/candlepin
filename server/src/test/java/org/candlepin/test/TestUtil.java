@@ -498,6 +498,13 @@ public class TestUtil {
         return jsqlD;
     }
 
+    public static Date datePlusYears(Date date, int years) {
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+        c.add(Calendar.YEAR, years);
+        return c.getTime();
+    }
+
     public static String xmlToBase64String(String xml) {
 
         // byte[] bytes = Base64.encode(xml);

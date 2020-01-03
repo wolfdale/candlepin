@@ -43,6 +43,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -102,14 +103,15 @@ public class ConsumerResourceVirtEntitlementTest extends DatabaseTestFixture {
         productLimit.setAttribute(Pool.Attributes.MULTI_ENTITLEMENT, "yes");
         productLimit = this.createProduct(productLimit, owner);
 
+        Date now = new Date();
         SubscriptionDTO limitSub = new SubscriptionDTO();
         limitSub.setId(Util.generateDbUUID());
         limitSub.setOwner(this.modelTranslator.translate(owner, OwnerDTO.class));
         limitSub.setProduct(this.modelTranslator.translate(productLimit, ProductDTO.class));
         limitSub.setQuantity(10L);
-        limitSub.setStartDate(TestUtil.createDate(2010, 1, 1));
-        limitSub.setEndDate(TestUtil.createDate(2020, 1, 1));
-        limitSub.setLastModified(TestUtil.createDate(2000, 1, 1));
+        limitSub.setStartDate(TestUtil.datePlusYears(now, -1));
+        limitSub.setEndDate(TestUtil.datePlusYears(now, 1));
+        limitSub.setLastModified(TestUtil.datePlusYears(now, -5));
         subscriptions.add(limitSub);
 
         limitPools = poolManager.createAndEnrichPools(limitSub);
@@ -125,9 +127,10 @@ public class ConsumerResourceVirtEntitlementTest extends DatabaseTestFixture {
         unlimitSub.setOwner(this.modelTranslator.translate(owner, OwnerDTO.class));
         unlimitSub.setProduct(this.modelTranslator.translate(productUnlimit, ProductDTO.class));
         unlimitSub.setQuantity(10L);
-        unlimitSub.setStartDate(TestUtil.createDate(2010, 1, 1));
-        unlimitSub.setEndDate(TestUtil.createDate(2020, 1, 1));
-        unlimitSub.setLastModified(TestUtil.createDate(2000, 1, 1));
+
+        unlimitSub.setStartDate(TestUtil.datePlusYears(now, -1));
+        unlimitSub.setEndDate(TestUtil.datePlusYears(now, 1));
+        unlimitSub.setLastModified(TestUtil.datePlusYears(now, -5));
         subscriptions.add(unlimitSub);
 
         unlimitPools = poolManager.createAndEnrichPools(unlimitSub);
