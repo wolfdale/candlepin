@@ -808,6 +808,14 @@ public class OwnerResource {
         return this.translator.translateQuery(query, OwnerDTO.class);
     }
 
+    @GET
+    @Path("/test")
+    @Produces(MediaType.APPLICATION_JSON)
+    public void doAThing() throws Exception {
+        ((org.candlepin.audit.EventSinkImpl) this.sink).doTest();
+
+    }
+
     /**
      * Retrieves a single Owner
      * <p>

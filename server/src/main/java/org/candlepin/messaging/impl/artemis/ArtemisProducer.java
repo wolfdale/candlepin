@@ -25,12 +25,16 @@ import org.apache.activemq.artemis.api.core.client.ClientProducer;
 
 import java.util.Objects;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
  * CPMProducer implementation backed by Artemis
  */
 public class ArtemisProducer implements CPMProducer {
+
+    private static  Logger log = LoggerFactory.getLogger(ArtemisProducer.class);
 
     private final ArtemisSession session;
     private final ClientProducer producer;
@@ -104,8 +108,14 @@ public class ArtemisProducer implements CPMProducer {
         }
 
         try {
+            log.debug("ATTEMPTING TO SEND MESSAGE: {}", message);
+
             ClientMessage cmsg = convertMessage(message);
+
+            log.debug("AM I BLOCKED? {}, {}", this.producer.isBlockOnDurableSend(), this.producer.isBlockOnNonDurableSend());
             this.producer.send(address, cmsg);
+
+            log.debug("DONE SENDING");
         }
         catch (ActiveMQException e) {
             throw new CPMException(e);
