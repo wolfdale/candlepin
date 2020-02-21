@@ -51,6 +51,7 @@ import org.candlepin.controller.ContentAccessManager;
 import org.candlepin.controller.Entitler;
 import org.candlepin.controller.ManifestManager;
 import org.candlepin.controller.PoolManager;
+import org.candlepin.controller.refresher.RefreshWorker;
 import org.candlepin.dto.ModelTranslator;
 import org.candlepin.dto.StandardTranslator;
 import org.candlepin.dto.api.v1.CertificateDTO;

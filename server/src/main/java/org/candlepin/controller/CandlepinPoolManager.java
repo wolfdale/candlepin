@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009 - 2012 Red Hat, Inc.
+ * Copyright (c) 2009 - 2020 Red Hat, Inc.
  *
  * This software is licensed to you under the GNU General Public License,
  * version 2 (GPLv2). There is NO WARRANTY for this software, express or
@@ -26,6 +26,8 @@ import org.candlepin.common.config.Configuration;
 import org.candlepin.common.paging.Page;
 import org.candlepin.common.paging.PageRequest;
 import org.candlepin.config.ConfigProperties;
+import org.candlepin.controller.refresher.RefreshResult;
+import org.candlepin.controller.refresher.RefreshWorker;
 import org.candlepin.model.CandlepinQuery;
 import org.candlepin.model.Cdn;
 import org.candlepin.model.CdnCertificate;
@@ -35,7 +37,6 @@ import org.candlepin.model.Consumer;
 import org.candlepin.model.ConsumerCurator;
 import org.candlepin.model.ConsumerType;
 import org.candlepin.model.ConsumerTypeCurator;
-import org.candlepin.model.Content;
 import org.candlepin.model.Entitlement;
 import org.candlepin.model.EntitlementCertificateCurator;
 import org.candlepin.model.EntitlementCurator;
@@ -71,7 +72,6 @@ import org.candlepin.service.SubscriptionServiceAdapter;
 import org.candlepin.service.model.CdnInfo;
 import org.candlepin.service.model.CertificateInfo;
 import org.candlepin.service.model.CertificateSerialInfo;
-import org.candlepin.service.model.ContentInfo;
 import org.candlepin.service.model.ProductInfo;
 import org.candlepin.service.model.SubscriptionInfo;
 import org.candlepin.util.Traceable;
@@ -106,6 +106,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.inject.Provider;
 import javax.ws.rs.core.MediaType;
 
 
@@ -118,6 +119,7 @@ public class CandlepinPoolManager implements PoolManager {
     private static final Logger log = LoggerFactory.getLogger(CandlepinPoolManager.class);
     private static final int MAX_ENTITLE_RETRIES = 3;
 
+<<<<<<< HEAD
     private final I18n i18n;
     private final PoolCurator poolCurator;
     private final EventSink sink;
@@ -143,6 +145,34 @@ public class CandlepinPoolManager implements PoolManager {
     private final OwnerManager ownerManager;
     private final BindChainFactory bindChainFactory;
     private final JsonProvider jsonProvider;
+=======
+    private EventSink sink;
+    private EventFactory eventFactory;
+    private Configuration config;
+    private Enforcer enforcer;
+    private PoolRules poolRules;
+    private EntitlementCurator entitlementCurator;
+    private ConsumerCurator consumerCurator;
+    private ConsumerTypeCurator consumerTypeCurator;
+    private EntitlementCertificateCurator entitlementCertificateCurator;
+    private EntitlementCertificateGenerator ecGenerator;
+    private ComplianceRules complianceRules;
+    private SystemPurposeComplianceRules systemPurposeComplianceRules;
+    private ProductCurator productCurator;
+    private ProductManager productManager;
+    private AutobindRules autobindRules;
+    private ActivationKeyRules activationKeyRules;
+    private ContentManager contentManager;
+    private OwnerContentCurator ownerContentCurator;
+    private OwnerCurator ownerCurator;
+    private OwnerProductCurator ownerProductCurator;
+    private CdnCurator cdnCurator;
+    private OwnerManager ownerManager;
+    private BindChainFactory bindChainFactory;
+    private Provider<RefreshWorker> refreshWorkerProvider;
+
+    @Inject protected JsonProvider jsonProvider;
+>>>>>>> ad8e57e67 (Added the RefreshWorker framework and refactored the refresh process)
 
     /**
      * @param poolCurator
@@ -176,6 +206,7 @@ public class CandlepinPoolManager implements PoolManager {
         CdnCurator cdnCurator,
         I18n i18n,
         BindChainFactory bindChainFactory,
+<<<<<<< HEAD
         JsonProvider jsonProvider) {
 
         this.poolCurator = Objects.requireNonNull(poolCurator);
@@ -203,6 +234,37 @@ public class CandlepinPoolManager implements PoolManager {
         this.i18n = Objects.requireNonNull(i18n);
         this.bindChainFactory = Objects.requireNonNull(bindChainFactory);
         this.jsonProvider = Objects.requireNonNull(jsonProvider);
+=======
+        Provider<RefreshWorker> refreshWorkerProvider) {
+
+        this.poolCurator = poolCurator;
+        this.sink = sink;
+        this.eventFactory = eventFactory;
+        this.config = config;
+        this.entitlementCurator = entitlementCurator;
+        this.consumerCurator = consumerCurator;
+        this.consumerTypeCurator = consumerTypeCurator;
+        this.enforcer = enforcer;
+        this.poolRules = poolRules;
+        this.entitlementCertificateCurator = entitlementCertCurator;
+        this.ecGenerator = ecGenerator;
+        this.complianceRules = complianceRules;
+        this.systemPurposeComplianceRules = systemPurposeComplianceRules;
+        this.productCurator = productCurator;
+        this.autobindRules = autobindRules;
+        this.activationKeyRules = activationKeyRules;
+        this.productCurator = productCurator;
+        this.productManager = productManager;
+        this.contentManager = contentManager;
+        this.ownerContentCurator = ownerContentCurator;
+        this.ownerCurator = ownerCurator;
+        this.ownerProductCurator = ownerProductCurator;
+        this.ownerManager = ownerManager;
+        this.cdnCurator = cdnCurator;
+        this.i18n = i18n;
+        this.bindChainFactory = bindChainFactory;
+        this.refreshWorkerProvider = refreshWorkerProvider;
+>>>>>>> ad8e57e67 (Added the RefreshWorker framework and refactored the refresh process)
     }
 
     /*
@@ -219,14 +281,16 @@ public class CandlepinPoolManager implements PoolManager {
         owner = this.resolveOwner(owner);
         log.info("Refreshing pools for owner: {}", owner);
 
-        ImportedEntityCompiler compiler = new ImportedEntityCompiler();
+        RefreshWorker refresher = this.refreshWorkerProvider.get();
 
         log.debug("Fetching subscriptions from adapter...");
-        compiler.addSubscriptions(subAdapter.getSubscriptions(owner.getKey()));
+        refresher.addSubscriptions(subAdapter.getSubscriptions(owner.getKey()));
 
-        Map<String, ? extends SubscriptionInfo> subscriptionMap = compiler.getSubscriptions();
-        Map<String, ? extends ProductInfo> productMap = compiler.getProducts();
-        Map<String, ? extends ContentInfo> contentMap = compiler.getContent();
+        RefreshResult refreshResult = refresher.execute(owner);
+
+        Map<String, Product> processedProducts = refreshResult.getProcessedProducts();
+        Map<String, Product> updatedProducts = refreshResult.getUpdatedProducts();
+        Map<String, ? extends SubscriptionInfo> subscriptionMap = refresher.getSubscriptions();
 
         // If trace output is enabled, dump some JSON representing the subscriptions we received so
         // we can simulate this in a testing environment.
@@ -244,20 +308,6 @@ public class CandlepinPoolManager implements PoolManager {
             }
         }
 
-        // Persist content changes
-        log.debug("Importing {} content...", contentMap.size());
-
-        Map<String, Content> importedContent = this.contentManager
-            .importContent(owner, contentMap, productMap.keySet())
-            .getImportedEntities();
-
-        log.debug("Importing {} product(s)...", productMap.size());
-        ImportResult<Product> importResult = this.productManager
-            .importProducts(owner, productMap, importedContent);
-
-        Map<String, Product> importedProducts = importResult.getImportedEntities();
-        Map<String, Product> updatedProducts = importResult.getUpdatedEntities();
-
         log.debug("Refreshing {} pool(s)...", subscriptionMap.size());
         for (Iterator<? extends SubscriptionInfo> si = subscriptionMap.values().iterator(); si.hasNext();) {
             SubscriptionInfo sub = si.next();
@@ -270,7 +320,7 @@ public class CandlepinPoolManager implements PoolManager {
             }
 
             log.debug("Processing subscription: {}", sub);
-            Pool pool = this.convertToMasterPoolImpl(sub, owner, importedProducts);
+            Pool pool = this.convertToMasterPoolImpl(sub, owner, processedProducts);
             pool.setLocked(true);
             this.refreshPoolsForMasterPool(pool, false, lazy, updatedProducts);
         }
