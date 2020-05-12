@@ -24,8 +24,8 @@ describe 'Consumer Dev Resource' do
       :quantity => 10
     })
 
-    @provided_product_1 = create_upstream_product("prov_product_1", { :name => "provided product 1" })
-    @provided_product_2 = create_upstream_product("prov_product_2", { :name => "provided product 2" })
+    provided_product_1 = create_upstream_product("prov_product_1", { :name => "provided product 1" })
+    provided_product_2 = create_upstream_product("prov_product_2", { :name => "provided product 2" })
 
     @dev_product_1 = create_upstream_product("dev_product_1", {
         :name => "dev product 1",
@@ -48,8 +48,8 @@ describe 'Consumer Dev Resource' do
     })
 
     @consumer.update_consumer({:installedProducts => [
-      {'productId' => @provided_product_1['id'], 'productName' => @provided_product_1['name']},
-      {'productId' => @provided_product_2['id'], 'productName' => @provided_product_2['name']}
+      {'productId' => provided_product_1['id'], 'productName' => provided_product_1['name']},
+      {'productId' => provided_product_2['id'], 'productName' => provided_product_2['name']}
     ]})
   end
 
