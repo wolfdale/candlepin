@@ -57,9 +57,9 @@ import org.candlepin.dto.api.v1.CertificateDTO;
 import org.candlepin.dto.api.v1.CertificateSerialDTO;
 import org.candlepin.dto.api.v1.ComplianceStatusDTO;
 import org.candlepin.dto.api.v1.ConsumerDTO;
+import org.candlepin.dto.api.v1.ConsumerDTOArrayElement;
 import org.candlepin.dto.api.v1.ContentAccessDTO;
 import org.candlepin.dto.api.v1.KeyValueParamDTO;
-import org.candlepin.dto.api.v1.OwnerDTO;
 import org.candlepin.model.CandlepinQuery;
 import org.candlepin.model.Cdn;
 import org.candlepin.model.CdnCurator;
@@ -94,6 +94,7 @@ import org.candlepin.resource.util.ConsumerEnricher;
 import org.candlepin.resource.util.ConsumerTypeValidator;
 import org.candlepin.resource.util.GuestMigration;
 import org.candlepin.resource.util.ResourceDateParser;
+import org.candlepin.resource.validation.DTOValidator;
 import org.candlepin.service.EntitlementCertServiceAdapter;
 import org.candlepin.service.IdentityCertServiceAdapter;
 import org.candlepin.service.ProductServiceAdapter;
@@ -182,6 +183,7 @@ public class ConsumerResourceTest {
     @Mock private UserServiceAdapter userServiceAdapter;
     @Mock private DeletedConsumerCurator mockDeletedConsumerCurator;
     @Mock private JobManager mockJobManager;
+    @Mock private DTOValidator dtoValidator;
 
     private GuestMigration testMigration;
     private Provider<GuestMigration> migrationProvider;
@@ -240,7 +242,8 @@ public class ConsumerResourceTest {
             consumerEnricher,
             migrationProvider,
             translator,
-            mockJobManager);
+            mockJobManager,
+            this.dtoValidator);
 
         mockedConsumerResource = Mockito.spy(consumerResource);
     }
@@ -395,7 +398,7 @@ public class ConsumerResourceTest {
             mockPoolManager, null, null, null, null, null, null, null, null, null,
             this.config, null, null, consumerBindUtil,
             null, null, this.factValidator, null, consumerEnricher, migrationProvider, translator,
-            this.mockJobManager);
+            this.mockJobManager, this.dtoValidator);
 
         // Fixme throw custom exception from generator instead of generic RuntimeException
         assertThrows(RuntimeException.class, () ->
@@ -441,7 +444,7 @@ public class ConsumerResourceTest {
         ConsumerDTO fooc = consumerResource.regenerateIdentityCertificates(consumer.getUuid());
 
         assertNotNull(fooc);
-        CertificateDTO ic1 = fooc.getIdCertificate();
+        CertificateDTO ic1 = fooc.getIdCert();
         assertNotNull(ic1);
         assertFalse(ic.getId().equals(ic1.getId()));
     }
@@ -463,7 +466,7 @@ public class ConsumerResourceTest {
 
         ConsumerDTO c = consumerResource.getConsumer(consumer.getUuid());
 
-        assertFalse(origserial.equals(c.getIdCertificate().getSerial().getSerial()));
+        assertFalse(origserial.equals(c.getIdCert().getSerial().getSerial()));
     }
 
     @Test
@@ -477,7 +480,7 @@ public class ConsumerResourceTest {
 
         ConsumerDTO c = consumerResource.getConsumer(consumer.getUuid());
 
-        assertEquals(origserial, c.getIdCertificate().getSerial().getSerial());
+        assertEquals(origserial, c.getIdCert().getSerial().getSerial());
     }
 
     @Test
@@ -702,7 +705,7 @@ public class ConsumerResourceTest {
             any(List.class), any(List.class))).thenReturn(cqmock);
         when(cqmock.transform(any(ElementTransformer.class))).thenReturn(cqmock);
 
-        List<ConsumerDTO> result = consumerResource
+        List<ConsumerDTOArrayElement> result = consumerResource
             .list("TaylorSwift", null, null, null, null, null, null)
             .list();
         assertEquals(consumers, result);
@@ -720,7 +723,7 @@ public class ConsumerResourceTest {
             any(List.class), any(List.class), any(List.class), any(List.class), any(List.class),
             any(List.class))).thenReturn(cqmock);
 
-        List<ConsumerDTO> result = consumerResource.list(null, null, "taylorOwner",
+        List<ConsumerDTOArrayElement> result = consumerResource.list(null, null, "taylorOwner",
             null, null, null, null).list();
         assertEquals(consumers, result);
     }
@@ -748,7 +751,8 @@ public class ConsumerResourceTest {
 
         List<String> uuids = new ArrayList<>();
         uuids.add("swiftuuid");
-        List<ConsumerDTO> result = consumerResource.list(null, null, null, uuids, null, null, null).list();
+        List<ConsumerDTOArrayElement> result = consumerResource.list(null, null,
+            null, uuids, null, null, null).list();
         assertEquals(consumers, result);
     }
 
