@@ -6,7 +6,7 @@ description = "Candlepin Server"
 
 apply plugin: "war"
 apply plugin: Gettext
-apply plugin: "maven"
+apply plugin: "maven-publish"
 
 
 // Copy the resources to the main classes directory so that the
@@ -139,6 +139,21 @@ task apiJar(type: Jar) {
         'util'
     ].collect { "/org/candlepin/${it}/" }
     duplicatesStrategy = 'exclude'
+}
+
+//Add the artifacts & publishing section for distribution of the API Jar and  war file
+artifacts {
+    archives war
+    archives apiJar
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication){
+            artifact war
+            artifact apiJar
+        }
+    }
 }
 
 dependencies {

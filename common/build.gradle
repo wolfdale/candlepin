@@ -3,7 +3,7 @@ description = "Candlepin Common"
 
 apply plugin: Msgfmt
 apply plugin: Gettext
-apply plugin: "maven"
+apply plugin: "maven-publish"
 
 msgfmt {
     resource "${project.group}.common.i18n.Messages"
