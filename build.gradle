@@ -146,7 +146,6 @@ ext.libraries = [
 
 allprojects {
     group = "org.candlepin"
-    apply plugin: "maven"
     apply plugin: "nebula.lint"
     apply plugin: "io.spring.dependency-management"
     apply plugin: com.github.benmanes.gradle.versions.VersionsPlugin
