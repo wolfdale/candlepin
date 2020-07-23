@@ -151,6 +151,12 @@ publishing {
         mavenWeb(MavenPublication) {
             from components.web
         }
+        create('jar', MavenPublication) {
+            artifact apiJar
+            groupId project.group
+            artifactId 'candlepin-api'
+            version project.version
+        }
     }
 }
 
