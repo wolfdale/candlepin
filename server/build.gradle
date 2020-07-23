@@ -6,7 +6,7 @@ description = "Candlepin Server"
 
 apply plugin: "war"
 apply plugin: Gettext
-apply plugin "maven"
+apply plugin: "maven"
 
 
 // Copy the resources to the main classes directory so that the
