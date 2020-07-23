@@ -141,6 +141,19 @@ task apiJar(type: Jar) {
     duplicatesStrategy = 'exclude'
 }
 
+publishing {
+    repositories {
+        maven {
+            url = "$buildDir/repo"
+        }
+    }
+    publications {
+        mavenWeb(MavenPublication) {
+            from components.web
+        }
+    }
+}
+
 dependencies {
     annotationProcessor libraries.hibernate_validator_ap
 
