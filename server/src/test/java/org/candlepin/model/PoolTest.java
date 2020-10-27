@@ -139,27 +139,6 @@ public class PoolTest extends DatabaseTestFixture {
     }
 
     @Test
-    public void testCreateWithDerivedProvidedProducts() {
-        Product derivedProd = this.createProduct(owner);
-        Product derivedProvidedProduct = this.createProduct(owner);
-
-        Pool p = TestUtil.createPool(owner, prod1, 1000);
-        p.getProduct().setProvidedProducts(Arrays.asList(prod2));
-
-        derivedProd.setProvidedProducts(Arrays.asList(derivedProvidedProduct));
-        p.setDerivedProduct(derivedProd);
-
-        poolCurator.create(p);
-
-        Pool lookedUp = this.getEntityManager().find(Pool.class, p.getId());
-        assertEquals(1, lookedUp.getProduct().getProvidedProducts().size());
-        assertEquals(prod2.getId(), lookedUp.getProduct().getProvidedProducts().iterator().next().getId());
-        assertEquals(1, lookedUp.getDerivedProduct().getProvidedProducts().size());
-        assertEquals(derivedProvidedProduct.getId(),
-            lookedUp.getDerivedProduct().getProvidedProducts().iterator().next().getId());
-    }
-
-    @Test
     public void testMultiplePoolsForOwnerProductAllowed() {
         Pool duplicatePool = createPool(
             owner, prod1, -1L, TestUtil.createDate(2009, 11, 30), TestUtil.createDate(2050, 11, 30)
