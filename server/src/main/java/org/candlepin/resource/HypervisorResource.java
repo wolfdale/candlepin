@@ -48,9 +48,7 @@ import org.candlepin.resource.util.GuestMigration;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.inject.Inject;
 import com.google.inject.name.Named;
-import com.google.inject.persist.Transactional;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -62,6 +60,9 @@ import io.swagger.annotations.Authorization;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.xnap.commons.i18n.I18n;
 
 import java.util.ArrayList;
@@ -91,6 +92,8 @@ import javax.ws.rs.core.MediaType;
 /**
  * HypervisorResource
  */
+@Component
+@Transactional
 @Path("/hypervisors")
 @Api(value = "hypervisors", authorizations = { @Authorization("basic") })
 public class HypervisorResource {
@@ -108,7 +111,7 @@ public class HypervisorResource {
     private JobManager jobManager;
     private ObjectMapper mapper;
 
-    @Inject
+    @Autowired
     public HypervisorResource(ConsumerResource consumerResource, ConsumerCurator consumerCurator,
         ConsumerTypeCurator consumerTypeCurator, I18n i18n, OwnerCurator ownerCurator,
         Provider<GuestMigration> migrationProvider, ModelTranslator translator,

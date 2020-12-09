@@ -38,6 +38,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * A DTO representation of the Owner entity
  */
+//@Component
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @ApiModel(parent = TimestampedCandlepinDTO.class, description = "DTO representing an owner/organization")

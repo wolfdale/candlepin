@@ -27,18 +27,15 @@ import org.apache.activemq.artemis.api.core.client.ServerLocator;
 import org.apache.activemq.artemis.core.remoting.CloseListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Objects;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
 
 
 
 /**
  * CPMSessionFactory implementation backed by Artemis
  */
-@Singleton
 public class ArtemisSessionFactory implements CPMSessionFactory {
     private static Logger log = LoggerFactory.getLogger(ArtemisSessionFactory.class);
 
@@ -90,7 +87,7 @@ public class ArtemisSessionFactory implements CPMSessionFactory {
         }
 
         /**
-         * Fetches the current client session, creating and intializing a new instance as necessary.
+         * Fetches the current client session, creating and initializing a new instance as necessary.
          *
          * @param config
          *  the session configuration to use to create the session
@@ -140,7 +137,7 @@ public class ArtemisSessionFactory implements CPMSessionFactory {
      * @param config
      *  The Candlepin configuration to use to initialize this session factory
      */
-    @Inject
+    @Autowired
     public ArtemisSessionFactory(Configuration config) {
         this.config = Objects.requireNonNull(config);
 

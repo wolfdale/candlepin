@@ -24,12 +24,12 @@ import org.candlepin.model.Pool;
 import org.candlepin.model.Product;
 import org.candlepin.policy.js.compliance.hash.ComplianceStatusHasher;
 
-import com.google.inject.Inject;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.xnap.commons.i18n.I18n;
 
 import java.util.Arrays;
@@ -49,6 +49,7 @@ import java.util.stream.Stream;
  *
  * A class used to check consumer compliance status.
  */
+@Component
 public class SystemPurposeComplianceRules {
     private static Logger log = LoggerFactory.getLogger(SystemPurposeComplianceRules.class);
 
@@ -57,7 +58,7 @@ public class SystemPurposeComplianceRules {
     private ConsumerTypeCurator consumerTypeCurator;
     private I18n i18n;
 
-    @Inject
+    @Autowired
     public SystemPurposeComplianceRules(EventSink eventSink, ConsumerCurator consumerCurator,
         ConsumerTypeCurator consumerTypeCurator, I18n i18n) {
 

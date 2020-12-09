@@ -32,6 +32,7 @@ import com.google.inject.Inject;
  * @author fnguyen
  *
  */
+//@Component
 public class ProductCachedSerializationModule extends SimpleModule {
 
     @Inject

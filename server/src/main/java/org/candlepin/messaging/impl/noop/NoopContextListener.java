@@ -17,24 +17,21 @@ package org.candlepin.messaging.impl.noop;
 import org.candlepin.messaging.CPMContextListener;
 import org.candlepin.messaging.CPMException;
 
-import com.google.inject.Injector;
-
-import javax.inject.Singleton;
-
 
 
 /**
  * CPMContextListener implementation which does nothing. Used for environments in which no provider
  * is configured or available.
  */
-@Singleton
+//@Singleton
 public class NoopContextListener implements CPMContextListener {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void initialize(Injector injector) throws CPMException {
+    //public void initialize(Injector injector) throws CPMException {
+    public void initialize() throws CPMException {
         // Intentionally left empty
     }
 

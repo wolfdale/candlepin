@@ -28,7 +28,7 @@ import org.candlepin.model.AsyncJobStatus;
 import org.candlepin.model.AsyncJobStatus.JobState;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.inject.persist.UnitOfWork;
+import com.google.inject.Inject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,14 +41,13 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.inject.Inject;
-
-
 
 /**
  *
  *
  */
+//@Component
+//@Scope("prototype")
 public class JobMessageReceiver {
     private static Logger log = LoggerFactory.getLogger(JobMessageReceiver.class);
 
@@ -65,7 +64,7 @@ public class JobMessageReceiver {
     private MessageListener listener;
     private String filter;
     private Set<CPMSession> sessions;
-    private UnitOfWork unitOfWork;
+    //private UnitOfWork unitOfWork;
 
 
     /**
@@ -82,12 +81,12 @@ public class JobMessageReceiver {
      */
     @Inject
     public JobMessageReceiver(Configuration config, CPMSessionFactory cpmSessionFactory,
-        ObjectMapper mapper, UnitOfWork unitOfWork) {
+        ObjectMapper mapper) {
 
         this.config = Objects.requireNonNull(config);
         this.cpmSessionFactory = Objects.requireNonNull(cpmSessionFactory);
         this.mapper = Objects.requireNonNull(mapper);
-        this.unitOfWork = Objects.requireNonNull(unitOfWork);
+        //this.unitOfWork = Objects.requireNonNull(unitOfWork);
 
         this.initialized = false;
         this.suspended = false;
@@ -246,7 +245,7 @@ public class JobMessageReceiver {
         }
 
         try {
-            this.listener = new MessageListener(manager, this.mapper, this.unitOfWork);
+            this.listener = new MessageListener(manager, this.mapper);
             this.filter = this.buildAMQPFilterExpression();
 
             int listenerThreads = this.config.getInt(ConfigProperties.ASYNC_JOBS_THREADS);
@@ -355,7 +354,7 @@ public class JobMessageReceiver {
 
         private final JobManager manager;
         private final ObjectMapper mapper;
-        private final UnitOfWork unitOfWork;
+        //private final UnitOfWork unitOfWork;
 
         /**
          * Initializes a new message listener using the specified job manager to process
@@ -364,10 +363,10 @@ public class JobMessageReceiver {
          * @param manager
          *  The JobManager instance to process received job messages; cannot be null
          */
-        public MessageListener(JobManager manager, ObjectMapper mapper, UnitOfWork unitOfWork) {
+        public MessageListener(JobManager manager, ObjectMapper mapper) {
             this.manager = Objects.requireNonNull(manager);
             this.mapper = Objects.requireNonNull(mapper);
-            this.unitOfWork = Objects.requireNonNull(unitOfWork);
+            //this.unitOfWork = Objects.requireNonNull(unitOfWork);
         }
 
         /**
@@ -387,7 +386,7 @@ public class JobMessageReceiver {
                 JobMessage jobMessage = this.mapper.readValue(message.getBody(), JobMessage.class);
                 log.debug("Deserialized job message: {}", jobMessage);
 
-                this.unitOfWork.begin();
+                //this.unitOfWork.begin();
 
                 // Execute the job
                 AsyncJobStatus jobStatus = this.manager.executeJob(jobMessage);
@@ -480,7 +479,7 @@ public class JobMessageReceiver {
                 this.rollback(session);
             }
             finally {
-                this.unitOfWork.end();
+                //this.unitOfWork.end();
             }
         }
 

@@ -53,27 +53,6 @@ import org.candlepin.bind.BindContextFactory;
 import org.candlepin.bind.PreEntitlementRulesCheckOpFactory;
 import org.candlepin.cache.JCacheManagerProvider;
 import org.candlepin.common.config.Configuration;
-import org.candlepin.common.config.ConfigurationPrefixes;
-import org.candlepin.common.exceptions.mappers.BadRequestExceptionMapper;
-import org.candlepin.common.exceptions.mappers.CandlepinExceptionMapper;
-import org.candlepin.common.exceptions.mappers.DefaultOptionsMethodExceptionMapper;
-import org.candlepin.common.exceptions.mappers.FailureExceptionMapper;
-import org.candlepin.common.exceptions.mappers.InternalServerErrorExceptionMapper;
-import org.candlepin.common.exceptions.mappers.JAXBMarshalExceptionMapper;
-import org.candlepin.common.exceptions.mappers.JAXBUnmarshalExceptionMapper;
-import org.candlepin.common.exceptions.mappers.NoLogWebApplicationExceptionMapper;
-import org.candlepin.common.exceptions.mappers.NotAcceptableExceptionMapper;
-import org.candlepin.common.exceptions.mappers.NotAllowedExceptionMapper;
-import org.candlepin.common.exceptions.mappers.NotAuthorizedExceptionMapper;
-import org.candlepin.common.exceptions.mappers.NotFoundExceptionMapper;
-import org.candlepin.common.exceptions.mappers.NotSupportedExceptionMapper;
-import org.candlepin.common.exceptions.mappers.ReaderExceptionMapper;
-import org.candlepin.common.exceptions.mappers.RollbackExceptionMapper;
-import org.candlepin.common.exceptions.mappers.RuntimeExceptionMapper;
-import org.candlepin.common.exceptions.mappers.ValidationExceptionMapper;
-import org.candlepin.common.exceptions.mappers.WebApplicationExceptionMapper;
-import org.candlepin.common.exceptions.mappers.WriterExceptionMapper;
-import org.candlepin.common.guice.JPAInitializer;
 import org.candlepin.common.jackson.HateoasBeanPropertyFilter;
 import org.candlepin.common.resteasy.filter.DynamicJsonFilter;
 import org.candlepin.common.resteasy.filter.LinkHeaderResponseFilter;
@@ -81,23 +60,13 @@ import org.candlepin.common.resteasy.filter.PageRequestFilter;
 import org.candlepin.common.util.VersionUtil;
 import org.candlepin.common.validation.CandlepinMessageInterpolator;
 import org.candlepin.config.ConfigProperties;
-import org.candlepin.controller.CandlepinPoolManager;
 import org.candlepin.controller.Entitler;
-import org.candlepin.controller.OwnerManager;
-import org.candlepin.controller.PoolManager;
 import org.candlepin.controller.ScheduledExecutorServiceProvider;
 import org.candlepin.controller.SuspendModeTransitioner;
 import org.candlepin.controller.mode.CandlepinModeManager;
 import org.candlepin.dto.ModelTranslator;
 import org.candlepin.dto.StandardTranslator;
 import org.candlepin.jackson.PoolEventFilter;
-import org.candlepin.messaging.CPMContextListener;
-import org.candlepin.messaging.CPMSessionFactory;
-import org.candlepin.messaging.impl.artemis.ArtemisContextListener;
-import org.candlepin.messaging.impl.artemis.ArtemisSessionFactory;
-import org.candlepin.messaging.impl.artemis.ArtemisUtil;
-import org.candlepin.messaging.impl.noop.NoopContextListener;
-import org.candlepin.messaging.impl.noop.NoopSessionFactory;
 import org.candlepin.model.CPRestrictions;
 import org.candlepin.model.UeberCertificateGenerator;
 import org.candlepin.pki.CertificateReader;
@@ -107,46 +76,14 @@ import org.candlepin.pki.impl.JSSPKIUtility;
 import org.candlepin.pki.impl.JSSPrivateKeyReader;
 import org.candlepin.policy.SystemPurposeComplianceRules;
 import org.candlepin.policy.criteria.CriteriaRules;
-import org.candlepin.policy.js.JsRunner;
-import org.candlepin.policy.js.JsRunnerProvider;
 import org.candlepin.policy.js.RulesObjectMapper;
 import org.candlepin.policy.js.entitlement.Enforcer;
 import org.candlepin.policy.js.entitlement.EntitlementRules;
 import org.candlepin.policy.js.entitlement.EntitlementRulesTranslator;
-import org.candlepin.policy.js.pool.PoolRules;
-import org.candlepin.resource.ActivationKeyContentOverrideResource;
-import org.candlepin.resource.ActivationKeyResource;
-import org.candlepin.resource.AdminResource;
-import org.candlepin.resource.CdnResource;
-import org.candlepin.resource.CertificateSerialResource;
-import org.candlepin.resource.ConsumerContentOverrideResource;
-import org.candlepin.resource.ConsumerResource;
-import org.candlepin.resource.ConsumerTypeResource;
-import org.candlepin.resource.ContentResource;
-import org.candlepin.resource.CrlResource;
-import org.candlepin.resource.DeletedConsumerResource;
-import org.candlepin.resource.DistributorVersionResource;
-import org.candlepin.resource.EntitlementResource;
-import org.candlepin.resource.EnvironmentResource;
-import org.candlepin.resource.GuestIdResource;
-import org.candlepin.resource.HypervisorResource;
-import org.candlepin.resource.JobResource;
-import org.candlepin.resource.OwnerContentResource;
-import org.candlepin.resource.OwnerProductResource;
-import org.candlepin.resource.OwnerResource;
-import org.candlepin.resource.PoolResource;
-import org.candlepin.resource.ProductResource;
-import org.candlepin.resource.RoleResource;
-import org.candlepin.resource.RootResource;
-import org.candlepin.resource.RulesResource;
-import org.candlepin.resource.StatusResource;
-import org.candlepin.resource.SubscriptionResource;
-import org.candlepin.resource.UserResource;
 import org.candlepin.resource.util.GuestMigration;
 import org.candlepin.resource.util.ResolverUtil;
 import org.candlepin.resteasy.AnnotationLocator;
 import org.candlepin.resteasy.DateFormatter;
-import org.candlepin.resteasy.JsonProvider;
 import org.candlepin.resteasy.filter.AuthenticationFilter;
 import org.candlepin.resteasy.filter.AuthorizationFeature;
 import org.candlepin.resteasy.filter.CandlepinQueryInterceptor;
@@ -195,7 +132,6 @@ import com.google.inject.Singleton;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.google.inject.name.Named;
 import com.google.inject.name.Names;
-import com.google.inject.persist.jpa.JpaPersistModule;
 
 import io.swagger.jaxrs.config.BeanConfig;
 import io.swagger.jaxrs.listing.ApiListingResource;
@@ -216,8 +152,6 @@ import javax.validation.MessageInterpolator;
 import javax.validation.Validation;
 import javax.validation.ValidatorFactory;
 
-
-
 /**
  * CandlepinModule
  */
@@ -230,10 +164,11 @@ public class CandlepinModule extends AbstractModule {
 
     @Override
     public void configure() {
+
         // Bindings for our custom scope
-        CandlepinRequestScope requestScope = new CandlepinRequestScope();
-        bindScope(CandlepinRequestScoped.class, requestScope);
-        bind(CandlepinRequestScope.class).toInstance(requestScope);
+        //CandlepinRequestScope requestScope = new CandlepinRequestScope();
+        //bindScope(CandlepinRequestScoped.class, requestScope);
+        //bind(CandlepinRequestScope.class).toInstance(requestScope);
         bind(I18n.class).toProvider(I18nProvider.class);
         bind(BeanValidationEventListener.class).toProvider(ValidationListenerProvider.class);
         bind(MessageInterpolator.class).to(CandlepinMessageInterpolator.class);
@@ -245,44 +180,50 @@ public class CandlepinModule extends AbstractModule {
         bind(GuestMigration.class);
 
         // Endpoint resource
+        /* TODO (spring-guice): this is a temporary binding, should be removed later */
+        bind(Configuration.class).toInstance(config);
+
         resources();
+
+        /* TODO (spring-guice): check if this is needed */
+        //bind(Map.class).to(Map.class);
 
         bind(DateSource.class).to(DateSourceImpl.class).asEagerSingleton();
         bind(Enforcer.class).to(EntitlementRules.class);
         bind(EntitlementRulesTranslator.class);
-        bind(PoolManager.class).to(CandlepinPoolManager.class);
+        //bind(PoolManager.class).to(CandlepinPoolManager.class);
         bind(CandlepinModeManager.class).asEagerSingleton();
         bind(SuspendModeTransitioner.class).asEagerSingleton();
         bind(ScheduledExecutorService.class).toProvider(ScheduledExecutorServiceProvider.class);
         bind(HypervisorUpdateAction.class);
-        bind(OwnerManager.class);
-        bind(PoolRules.class);
+        //bind(OwnerManager.class);
+        //bind(PoolRules.class);
         bind(CriteriaRules.class);
         bind(Entitler.class);
-        bind(NotSupportedExceptionMapper.class);
-        bind(NotAuthorizedExceptionMapper.class);
-        bind(NotFoundExceptionMapper.class);
-        bind(NotAcceptableExceptionMapper.class);
-        bind(NoLogWebApplicationExceptionMapper.class);
-        bind(NotAllowedExceptionMapper.class);
-        bind(InternalServerErrorExceptionMapper.class);
-        bind(DefaultOptionsMethodExceptionMapper.class);
-        bind(BadRequestExceptionMapper.class);
-        bind(RollbackExceptionMapper.class);
-        bind(ValidationExceptionMapper.class);
-        bind(WebApplicationExceptionMapper.class);
-        bind(FailureExceptionMapper.class);
-        bind(ReaderExceptionMapper.class);
-        bind(WriterExceptionMapper.class);
-        bind(CandlepinExceptionMapper.class);
-        bind(RuntimeExceptionMapper.class);
-        bind(JAXBMarshalExceptionMapper.class);
-        bind(JAXBUnmarshalExceptionMapper.class);
+//        bind(NotSupportedExceptionMapper.class);
+//        bind(NotAuthorizedExceptionMapper.class);
+//        bind(NotFoundExceptionMapper.class);
+//        bind(NotAcceptableExceptionMapper.class);
+//        bind(NoLogWebApplicationExceptionMapper.class);
+//        bind(NotAllowedExceptionMapper.class);
+//        bind(InternalServerErrorExceptionMapper.class);
+//        bind(DefaultOptionsMethodExceptionMapper.class);
+//        bind(BadRequestExceptionMapper.class);
+//        bind(RollbackExceptionMapper.class);
+//        bind(ValidationExceptionMapper.class);
+//        bind(WebApplicationExceptionMapper.class);
+//        bind(FailureExceptionMapper.class);
+//        bind(ReaderExceptionMapper.class);
+//        bind(WriterExceptionMapper.class);
+//        bind(CandlepinExceptionMapper.class);
+//        bind(RuntimeExceptionMapper.class);
+//        bind(JAXBMarshalExceptionMapper.class);
+//        bind(JAXBUnmarshalExceptionMapper.class);
         bind(AnnotationLocator.class).asEagerSingleton();
 
         bind(Principal.class).toProvider(PrincipalProvider.class);
-        bind(JsRunnerProvider.class).asEagerSingleton();
-        bind(JsRunner.class).toProvider(JsRunnerProvider.class);
+        //bind(JsRunnerProvider.class).asEagerSingleton();
+        //bind(JsRunner.class).toProvider(JsRunnerProvider.class);
         bind(RulesObjectMapper.class).asEagerSingleton();
         bind(SyncUtils.class).asEagerSingleton();
         bind(UniqueIdGenerator.class).to(DefaultUniqueIdGenerator.class);
@@ -292,7 +233,7 @@ public class CandlepinModule extends AbstractModule {
         requestStaticInjection(CPRestrictions.class);
 
         bind(SystemPurposeComplianceRules.class);
-        bind(JsonProvider.class);
+//        bind(JsonProvider.class);
         miscConfigurations();
 
         // UeberCerts
@@ -320,34 +261,36 @@ public class CandlepinModule extends AbstractModule {
     }
 
     private void resources() {
-        bind(ActivationKeyContentOverrideResource.class);
-        bind(ActivationKeyResource.class);
-        bind(AdminResource.class);
-        bind(CdnResource.class);
-        bind(CertificateSerialResource.class);
-        bind(CrlResource.class);
-        bind(ConsumerContentOverrideResource.class);
-        bind(ConsumerResource.class);
-        bind(ConsumerTypeResource.class);
-        bind(ContentResource.class);
-        bind(DeletedConsumerResource.class);
-        bind(DistributorVersionResource.class);
-        bind(EntitlementResource.class);
-        bind(EnvironmentResource.class);
-        bind(GuestIdResource.class);
-        bind(HypervisorResource.class);
-        bind(JobResource.class);
-        bind(OwnerContentResource.class);
-        bind(OwnerProductResource.class);
-        bind(OwnerResource.class);
-        bind(PoolResource.class);
-        bind(ProductResource.class);
-        bind(RoleResource.class);
-        bind(RootResource.class);
-        bind(RulesResource.class);
-        bind(SubscriptionResource.class);
-        bind(StatusResource.class);
-        bind(UserResource.class);
+//        bind(ActivationKeyContentOverrideResource.class);
+//        bind(ActivationKeyResource.class);
+//        bind(AdminResource.class);
+//        bind(CdnResource.class);
+//        bind(CertificateSerialResource.class);
+//        bind(CrlResource.class);
+//        bind(ConsumerContentOverrideResource.class);
+//        bind(ConsumerResource.class);
+//        bind(ConsumerTypeResource.class);
+//        bind(ContentResource.class);
+//        bind(DeletedConsumerResource.class);
+//        bind(DistributorVersionResource.class);
+//        bind(EntitlementResource.class);
+//        bind(EnvironmentResource.class);
+//        bind(GuestIdResource.class);
+//        bind(HypervisorResource.class);
+//        bind(JobResource.class);
+//        bind(OwnerContentResource.class);
+//        bind(OwnerProductResource.class);
+//        bind(OwnerResource.class);
+//        bind(PoolResource.class);
+//        bind(ProductResource.class);
+//        bind(RoleResource.class);
+//        bind(RootResource.class);
+//        bind(RulesResource.class);
+//        bind(SubscriptionResource.class);
+//        bind(StatusResource.class);
+//        bind(UserResource.class);
+
+
     }
 
     private void miscConfigurations() {
@@ -378,21 +321,21 @@ public class CandlepinModule extends AbstractModule {
         String provider = this.config.getString(ConfigProperties.CPM_PROVIDER);
 
         // TODO: Change this to a map lookup as we get more providers
-
-        if (ArtemisUtil.PROVIDER.equalsIgnoreCase(provider)) {
-            bind(CPMContextListener.class).to(ArtemisContextListener.class).asEagerSingleton();
-            bind(CPMSessionFactory.class).to(ArtemisSessionFactory.class).asEagerSingleton();
-        }
-        else {
-            bind(CPMContextListener.class).to(NoopContextListener.class).asEagerSingleton();
-            bind(CPMSessionFactory.class).to(NoopSessionFactory.class).asEagerSingleton();
-        }
+//
+//        if (ArtemisUtil.PROVIDER.equalsIgnoreCase(provider)) {
+//            bind(CPMContextListener.class).to(ArtemisContextListener.class).asEagerSingleton();
+//            bind(CPMSessionFactory.class).to(ArtemisSessionFactory.class).asEagerSingleton();
+//        }
+//        else {
+//            bind(CPMContextListener.class).to(NoopContextListener.class).asEagerSingleton();
+//            bind(CPMSessionFactory.class).to(NoopSessionFactory.class).asEagerSingleton();
+//        }
     }
 
     protected void configureJPA() {
-        Configuration jpaConfig = config.strippedSubset(ConfigurationPrefixes.JPA_CONFIG_PREFIX);
-        install(new JpaPersistModule("default").properties(jpaConfig.toProperties()));
-        bind(JPAInitializer.class).asEagerSingleton();
+//        Configuration jpaConfig = config.strippedSubset(ConfigurationPrefixes.JPA_CONFIG_PREFIX);
+//        install(new JpaPersistModule("default0").properties(jpaConfig.toProperties()));
+//        bind(JPAInitializer.class).asEagerSingleton();
     }
 
     private void configureBindFactories() {

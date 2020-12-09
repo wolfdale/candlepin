@@ -28,6 +28,7 @@ import java.util.Map;
  * The CandlepinLegacyAttributeSerializer handles the serialization of attribute maps, writing them
  * in the legacy attribute format of [{"key1":"value1"}, ... ,{"keyN":"valueN"}].
  */
+//@Component
 public class CandlepinLegacyAttributeSerializer extends JsonSerializer<Map<String, String>> {
 
     @Override

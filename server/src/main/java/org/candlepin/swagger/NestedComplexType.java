@@ -35,6 +35,7 @@ import java.lang.reflect.Type;
  * @author fnguyen
  *
  */
+//@Component
 public class NestedComplexType implements Type {
     private JavaType originalRawType;
 

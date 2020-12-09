@@ -15,12 +15,14 @@
 package org.candlepin.model;
 
 
-import javax.inject.Singleton;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Handles the Certificate operations.
  */
-@Singleton
+@Component
+@Transactional
 public class SubscriptionsCertificateCurator extends AbstractHibernateCurator<SubscriptionsCertificate> {
 
     public SubscriptionsCertificateCurator() {

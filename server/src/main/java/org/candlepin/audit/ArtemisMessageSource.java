@@ -17,11 +17,11 @@ package org.candlepin.audit;
 import org.candlepin.async.impl.ActiveMQSessionFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 
@@ -30,7 +30,8 @@ import java.util.Collection;
  * a collection of MessageReceivers that listen for messages that are put in the Artemis
  * message queues.
  */
-@Singleton
+//@Singleton
+@Component
 public class ArtemisMessageSource implements MessageSource {
     private static Logger log = LoggerFactory.getLogger(ArtemisMessageSource.class);
 
@@ -38,7 +39,8 @@ public class ArtemisMessageSource implements MessageSource {
     private ActiveMQSessionFactory sessionFactory;
     private Collection<MessageReceiver> messageReceivers;
 
-    @Inject
+    //@Inject
+    @Autowired
     public ArtemisMessageSource(ActiveMQSessionFactory sessionFactory, ObjectMapper mapper,
         MessageSourceReceiverFactory receiverFactory) {
         this.sessionFactory = sessionFactory;

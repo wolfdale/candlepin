@@ -30,6 +30,7 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
@@ -106,7 +107,8 @@ public class User extends AbstractHibernateObject implements UserInfo {
     @ApiModelProperty(readOnly = true)
     private String id;
 
-    @ManyToMany(targetEntity = Role.class, mappedBy = "users")
+    // TODO: spring-guice FetchType.EAGER was added to avoid the lazy initialization error
+    @ManyToMany(targetEntity = Role.class, mappedBy = "users", fetch = FetchType.EAGER)
     private Set<Role> roles = new HashSet<>();
 
     @Column(nullable = false, unique = true)

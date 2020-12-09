@@ -33,6 +33,7 @@ import java.util.Date;
  * compatible with MySql.
  * The format used is ISO 8601
  */
+//@Component
 public class DateSerializer extends JsonSerializer<Date> {
     private final DateTimeFormatter dateFormat;
 

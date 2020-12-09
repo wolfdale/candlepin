@@ -14,8 +14,6 @@
  */
 package org.candlepin.dto;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
-
 import java.io.Serializable;
 
 
@@ -42,10 +40,11 @@ import java.io.Serializable;
  * @param <T>
  *  DTO type extending this class; should be the name of the subclass
  */
-@JsonFilter("DTOFilter")
+//@Component
+//@JsonFilter("DTOFilter")
 public abstract class CandlepinDTO<T extends CandlepinDTO> implements Cloneable, Serializable {
     public static final long serialVersionUID = 1L;
-
+    /* TODO spring - fix the commented annotation */
     /**
      * Initializes a new CandlepinDTO instance with null values.
      */

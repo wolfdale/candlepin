@@ -341,7 +341,6 @@ public class SimpleModelTranslator implements ModelTranslator {
     public <I, O> CandlepinQuery<O> translateQuery(CandlepinQuery<I> query, Class<O> outputClass) {
         // TODO: It would be great if we could make this method, and the CandlepinQuery more
         // generic, but type erasure makes this pretty cumbersome to do properly.
-
         if (query == null) {
             throw new IllegalArgumentException("query is null");
         }

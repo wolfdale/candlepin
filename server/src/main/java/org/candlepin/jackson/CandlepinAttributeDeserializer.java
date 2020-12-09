@@ -36,6 +36,7 @@ import java.util.Map;
  * The CandlepinAttributeDeserializer handles the deserialization of attributes, processing both
  * the current attribute mapping style and obsoleted formats.
  */
+//@Component
 public class CandlepinAttributeDeserializer extends StdDeserializer<Map<String, String>> {
     private static Logger log = LoggerFactory.getLogger(CandlepinAttributeDeserializer.class);
 

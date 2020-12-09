@@ -24,6 +24,7 @@ import com.fasterxml.jackson.databind.ser.PropertyWriter;
 /**
  * PoolEventFilter to show full pool json inside a list of entitlements for events
  */
+//@Component
 public class PoolEventFilter extends HateoasBeanPropertyFilter {
 
     public boolean isSerializable(Object obj, JsonGenerator jsonGenerator,

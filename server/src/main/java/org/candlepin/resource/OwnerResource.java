@@ -110,9 +110,6 @@ import org.candlepin.util.Util;
 
 import ch.qos.logback.classic.Level;
 
-import com.google.inject.Inject;
-import com.google.inject.persist.Transactional;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -130,6 +127,9 @@ import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartInput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.xnap.commons.i18n.I18n;
 
 import java.io.File;
@@ -170,6 +170,8 @@ import javax.ws.rs.core.MultivaluedMap;
 /**
  * Owner Resource
  */
+@Component
+@Transactional
 @Path("/owners")
 @Api(value = "owners", authorizations = { @Authorization("basic") })
 public class OwnerResource {
@@ -207,7 +209,8 @@ public class OwnerResource {
     private ModelTranslator translator;
     private JobManager jobManager;
 
-    @Inject
+    //@Inject
+    @Autowired
     public OwnerResource(OwnerCurator ownerCurator,
         ActivationKeyCurator activationKeyCurator,
         ConsumerCurator consumerCurator,

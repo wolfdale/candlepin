@@ -27,9 +27,8 @@ import org.candlepin.model.ContentOverride;
 import org.candlepin.model.ContentOverrideCurator;
 import org.candlepin.util.ContentOverrideValidator;
 
-import com.google.inject.persist.Transactional;
-
 import org.apache.commons.lang.StringUtils;
+import org.springframework.transaction.annotation.Transactional;
 import org.xnap.commons.i18n.I18n;
 
 import java.util.List;
@@ -157,6 +156,8 @@ public abstract class ContentOverrideResource<T extends ContentOverride<T, Paren
      * @httpcode 404
      * @httpcode 200
      */
+    /* TODO: Transactional is from guice, migration is needed for spring */
+
     @DELETE
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)

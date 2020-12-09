@@ -36,8 +36,6 @@ import org.candlepin.model.GuestIdCurator;
 import org.candlepin.model.VirtConsumerMap;
 import org.candlepin.resource.util.GuestMigration;
 
-import com.google.inject.Inject;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -47,6 +45,9 @@ import io.swagger.annotations.Authorization;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.xnap.commons.i18n.I18n;
 
 import java.util.HashSet;
@@ -69,6 +70,8 @@ import javax.ws.rs.core.MediaType;
 /**
  * API Gateway for registered consumers guests
  */
+@Component
+@Transactional
 @Path("/consumers/{consumer_uuid}/guestids")
 @Api(value = "consumers", authorizations = { @Authorization("basic") })
 public class GuestIdResource {
@@ -85,7 +88,8 @@ public class GuestIdResource {
     private Provider<GuestMigration> migrationProvider;
     private ModelTranslator translator;
 
-    @Inject
+    //@Inject
+    @Autowired
     public GuestIdResource(GuestIdCurator guestIdCurator, ConsumerCurator consumerCurator,
         ConsumerTypeCurator consumerTypeCurator, ConsumerResource consumerResource, I18n i18n,
         EventFactory eventFactory, EventSink sink, Provider<GuestMigration> migrationProvider,

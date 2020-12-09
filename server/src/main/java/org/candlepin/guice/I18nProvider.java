@@ -30,20 +30,24 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.inject.Singleton;
-import javax.servlet.http.HttpServletRequest;
-
 /**
  * I18nProvider
  */
 @Singleton
+//@Component
 public class I18nProvider extends CommonI18nProvider implements Provider<I18n> {
     private static Logger log = LoggerFactory.getLogger(I18nProvider.class);
     private static Map<Locale, I18n> cache = new ConcurrentHashMap<>();
-    private final Provider<HttpServletRequest> request;
+    //private final Provider<HttpServletRequest> request;
+    //private final HttpServletRequest request;
 
     @Inject
-    public I18nProvider(Provider<HttpServletRequest> request) {
-        this.request = request;
+//    //@Autowired
+//    public I18nProvider(Provider<HttpServletRequest> request) {
+//        this.request = request;
+//    }
+    public I18nProvider() {
+
     }
 
     @Override
@@ -51,7 +55,8 @@ public class I18nProvider extends CommonI18nProvider implements Provider<I18n> {
         Locale locale = null;
 
         try {
-            locale = request.get().getLocale();
+            //locale = request.get().getLocale();
+            //locale = new Locale.Builder().setLanguage("fr").setRegion("CA").build();
         }
         catch (ProvisionException e) {
             // This can happen in pinsetter, or anything else not in an http

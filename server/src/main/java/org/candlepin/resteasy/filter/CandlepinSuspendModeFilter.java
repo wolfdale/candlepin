@@ -21,8 +21,8 @@ import org.candlepin.controller.mode.CandlepinModeManager.Mode;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.inject.Inject;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.xnap.commons.i18n.I18n;
 
 import javax.ws.rs.container.ContainerRequestContext;
@@ -41,7 +41,7 @@ public class CandlepinSuspendModeFilter implements ContainerRequestFilter {
     private Configuration config;
     private I18n i18n;
 
-    @Inject
+    @Autowired
     public CandlepinSuspendModeFilter(CandlepinModeManager modeManager, ObjectMapper mapper,
         Configuration config, I18n i18n) {
 
@@ -57,6 +57,8 @@ public class CandlepinSuspendModeFilter implements ContainerRequestFilter {
     @Override
     public void filter(ContainerRequestContext requestContext)
         throws JsonProcessingException {
+        /* TODO: spring- Remove this print statement */
+        System.out.println("CandlepinSuspendModeFilter");
 
         // Allow status every time
         if (requestContext.getUriInfo().getPath().startsWith("/status")) {

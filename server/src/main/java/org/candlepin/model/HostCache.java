@@ -14,9 +14,9 @@
  */
 package org.candlepin.model;
 
-import org.candlepin.guice.CandlepinRequestScoped;
-
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.stereotype.Component;
+import org.springframework.web.context.annotation.RequestScope;
 
 import java.util.HashMap;
 
@@ -25,6 +25,7 @@ import java.util.HashMap;
  *
  * Key is a Pair of Strings, with the first being the guest ID and the second is the org ID.
  */
-@CandlepinRequestScoped
+@Component
+@RequestScope
 public class HostCache extends HashMap<Pair<String, String>, Consumer> {
 }

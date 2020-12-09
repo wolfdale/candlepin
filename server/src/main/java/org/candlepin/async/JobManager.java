@@ -33,8 +33,8 @@ import org.candlepin.model.Owner;
 import org.candlepin.model.OwnerCurator;
 import org.candlepin.util.Util;
 
+import com.google.inject.Inject;
 import com.google.inject.Injector;
-import com.google.inject.persist.Transactional;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -58,6 +58,7 @@ import org.quartz.spi.TriggerFiredBundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -73,7 +74,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceException;
@@ -85,6 +85,7 @@ import javax.transaction.Synchronization;
 /**
  * The JobManager manages the queueing, execution and general bookkeeping on jobs
  */
+//@Component
 @Singleton
 public class JobManager implements ModeChangeListener {
     private static final Logger log = LoggerFactory.getLogger(JobManager.class);
@@ -311,11 +312,11 @@ public class JobManager implements ModeChangeListener {
     private Set<String> blacklist;
     private Map<String, Configuration> jobConfig;
 
-
     /**
      * Creates a new JobManager instance
      */
     @Inject
+    //@Autowired
     public JobManager(
         Configuration configuration,
         SchedulerFactory schedulerFactory,
@@ -636,7 +637,7 @@ public class JobManager implements ModeChangeListener {
      */
     public synchronized void shutdown() throws StateManagementException {
         // TODO: actually do something with this
-
+        System.out.println("shutting down");
         this.validateStateTransition(ManagerState.SHUTDOWN);
 
         try {
@@ -1285,7 +1286,7 @@ public class JobManager implements ModeChangeListener {
      */
     private void setupJobRuntimeEnvironment(AsyncJobStatus status) {
         // Enter custom scope
-        this.candlepinRequestScope.enter();
+        //this.candlepinRequestScope.enter();
 
         // Save MDC state
         this.mdcState.set(MDC.getCopyOfContextMap());
@@ -1360,7 +1361,7 @@ public class JobManager implements ModeChangeListener {
         }
 
         // Leave scope
-        this.candlepinRequestScope.exit();
+        //this.candlepinRequestScope.exit();
     }
 
     /**

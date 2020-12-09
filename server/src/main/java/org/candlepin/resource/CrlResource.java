@@ -23,11 +23,13 @@ import org.candlepin.model.CertificateSerialCurator;
 import org.candlepin.pki.PKIUtility;
 import org.candlepin.util.CrlFileUtil;
 
-import com.google.inject.Inject;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -50,6 +52,8 @@ import javax.ws.rs.core.Response;
 /**
  * CrlResource
  */
+@Component
+@Transactional
 @Path("/crl")
 @Api(value = "crl", authorizations = { @Authorization("basic") })
 public class CrlResource {
@@ -60,7 +64,8 @@ public class CrlResource {
     private CertificateSerialCurator certificateSerialCurator;
 
 
-    @Inject
+    //@Inject
+    @Autowired
     public CrlResource(Configuration config, CrlFileUtil crlFileUtil, PKIUtility pkiUtility,
         CertificateSerialCurator certificateSerialCurator) {
 

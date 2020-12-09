@@ -16,11 +16,11 @@ package org.candlepin.servlet.filter;
 
 import org.candlepin.guice.CandlepinRequestScope;
 
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
@@ -42,14 +42,17 @@ import javax.servlet.ServletResponse;
  *
  */
 
-@Singleton
+//@Singleton
+@Component
+@Order(1)
 public class CandlepinScopeFilter implements Filter {
 
     private static Logger log = LoggerFactory.getLogger(CandlepinScopeFilter.class);
 
     private final CandlepinRequestScope requestScope;
 
-    @Inject
+    //@Inject
+    @Autowired
     public CandlepinScopeFilter(CandlepinRequestScope requestScope) {
         this.requestScope = requestScope;
     }
@@ -63,12 +66,12 @@ public class CandlepinScopeFilter implements Filter {
             return;
         }
 
-        requestScope.enter();
+        //requestScope.enter();
         try {
             chain.doFilter(request, response);
         }
         finally {
-            requestScope.exit();
+            //requestScope.exit();
         }
     }
 

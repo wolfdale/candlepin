@@ -22,11 +22,12 @@ import org.candlepin.model.activationkeys.ActivationKeyContentOverrideCurator;
 import org.candlepin.model.activationkeys.ActivationKeyCurator;
 import org.candlepin.util.ContentOverrideValidator;
 
-import com.google.inject.Inject;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.Authorization;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.xnap.commons.i18n.I18n;
 
 import javax.ws.rs.Path;
@@ -36,6 +37,8 @@ import javax.ws.rs.Path;
 /**
  * ActivationKeyContentOverrideResource
  */
+@Component
+@Transactional
 @Path("/activation_keys/{activation_key_id}/content_overrides")
 @Api(value = "activation_keys", authorizations = { @Authorization("basic") })
 public class ActivationKeyContentOverrideResource extends
@@ -49,7 +52,8 @@ public class ActivationKeyContentOverrideResource extends
      * @param akCurator
      * @param validator
      */
-    @Inject
+    //@Inject
+    @Autowired
     public ActivationKeyContentOverrideResource(I18n i18n, ActivationKeyContentOverrideCurator akcoCurator,
         ActivationKeyCurator akCurator, ContentOverrideValidator validator, ModelTranslator translator) {
 

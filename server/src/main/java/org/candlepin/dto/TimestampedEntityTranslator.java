@@ -17,7 +17,6 @@ package org.candlepin.dto;
 import org.candlepin.model.TimestampedEntity;
 
 
-
 /**
  * The TimestampedEntityTranslator provides common functionality for translating and populating
  * DTOs derived from model objects which contain the created and updated timestamps.

@@ -23,10 +23,11 @@ import org.candlepin.common.config.Configuration;
 import org.candlepin.config.ConfigProperties;
 import org.candlepin.dto.api.v1.Link;
 
-import com.google.inject.Inject;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -43,6 +44,8 @@ import javax.ws.rs.Path;
  * various resources Candlepin exposes. This list will be filtered based on the
  * permissions of the caller.
  */
+@Component
+@Transactional
 public class RootResource implements RootApi {
 
     private static Logger log = LoggerFactory.getLogger(RootResource.class);
@@ -79,7 +82,8 @@ public class RootResource implements RootApi {
         addResource(ConsumerContentOverrideResource.class);
     }
 
-    @Inject
+    //@Inject
+    @Autowired
     public RootResource(Configuration config) {
         this.config = config;
     }

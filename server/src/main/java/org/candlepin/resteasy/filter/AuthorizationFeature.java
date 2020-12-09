@@ -22,11 +22,12 @@ import io.swagger.jaxrs.listing.ApiListingResource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
-import javax.inject.Inject;
 import javax.ws.rs.container.DynamicFeature;
 import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.FeatureContext;
@@ -41,6 +42,7 @@ import javax.ws.rs.ext.Provider;
  * Guice will throw a ProvisionException if nothing is bound to the
  * AuthorizationFilter annotation.
  */
+@Component
 @Provider
 public class AuthorizationFeature implements DynamicFeature {
     private static final Logger log = LoggerFactory.getLogger(AuthorizationFeature.class);
@@ -50,15 +52,18 @@ public class AuthorizationFeature implements DynamicFeature {
     private AbstractAuthorizationFilter securityHoleFilter;
     private AnnotationLocator annotationLocator;
 
-    @Inject
+    @Autowired
     public AuthorizationFeature(VerifyAuthorizationFilter authorizationFilter,
         SuperAdminAuthorizationFilter superAdminFilter,
         SecurityHoleAuthorizationFilter securityHoleFilter,
         AnnotationLocator annotationLocator) {
+
+
         this.authorizationFilter = authorizationFilter;
         this.superAdminFilter = superAdminFilter;
         this.securityHoleFilter = securityHoleFilter;
         this.annotationLocator = annotationLocator;
+
     }
 
     @Override

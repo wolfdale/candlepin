@@ -21,11 +21,14 @@ import org.candlepin.common.exceptions.CandlepinException;
 import org.candlepin.common.exceptions.ExceptionMessage;
 import org.candlepin.common.util.VersionUtil;
 
-import com.google.inject.Inject;
-
 import org.jboss.resteasy.util.HttpHeaderNames;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.xnap.commons.i18n.I18n;
 
 import java.util.Arrays;
@@ -34,6 +37,7 @@ import java.util.Map;
 
 import javax.inject.Provider;
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
@@ -44,6 +48,7 @@ import javax.ws.rs.core.Response.Status;
 /**
  * CandlepinExceptionMapper
  */
+@Component
 public class CandlepinExceptionMapper {
     private static Logger log = LoggerFactory.getLogger(CandlepinExceptionMapper.class);
 
@@ -56,14 +61,20 @@ public class CandlepinExceptionMapper {
     );
 
     // Use a provider so we get a scoped HttpServletRequest
-    @Inject
-    private javax.inject.Provider<HttpServletRequest> requestProvider;
+//    @Autowired
+//    private javax.inject.Provider<HttpServletRequest> requestProvider;
 
-    @Inject
+    @Autowired
     protected Provider<I18n> i18n;
 
+    @Context
+    private HttpServletRequest request;
+
+
     public MediaType determineBestMediaType() {
-        HttpServletRequest request = requestProvider.get();
+        //HttpServletRequest request = requestProvider.get();
+//        HttpServletRequest request =
+//                ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         String header = request.getHeader(HttpHeaderNames.ACCEPT);
         MediaType mediaType = null;
 

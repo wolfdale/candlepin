@@ -57,6 +57,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * }
  * </pre>
  */
+//@Component
 @ApiModel(parent = TimestampedCandlepinDTO.class, description = "DTO representing a certificate")
 @XmlRootElement
 public class ContentDTO extends TimestampedCandlepinDTO<ContentDTO> implements ContentInfo {

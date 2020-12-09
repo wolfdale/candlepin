@@ -14,7 +14,6 @@
  */
 package org.candlepin.model;
 
-import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 import org.hibernate.Criteria;
@@ -31,6 +30,8 @@ import org.hibernate.criterion.Subqueries;
 import org.hibernate.type.StringType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -41,13 +42,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import javax.inject.Singleton;
 import javax.persistence.EntityManager;
 
 /**
  * OwnerInfoCurator
  */
-@Singleton
+@Component
 public class OwnerInfoCurator {
     private static Logger log = LoggerFactory.getLogger(OwnerInfoCurator.class);
 
@@ -56,7 +56,7 @@ public class OwnerInfoCurator {
     private ConsumerCurator consumerCurator;
     private PoolCurator poolCurator;
 
-    @Inject
+    @Autowired
     public OwnerInfoCurator(Provider<EntityManager> entityManager,
         ConsumerCurator consumerCurator, ConsumerTypeCurator consumerTypeCurator,
         PoolCurator poolCurator) {

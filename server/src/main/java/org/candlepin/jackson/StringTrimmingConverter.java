@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
  * necessitated by BZ 1405125 (ppc64 clients are reporting a virt uuid in the facts that
  * ends in a null byte).
  */
+//@Component
 public class StringTrimmingConverter extends StdConverter<String, String> {
     private static final Logger log = LoggerFactory.getLogger(StringTrimmingConverter.class);
 

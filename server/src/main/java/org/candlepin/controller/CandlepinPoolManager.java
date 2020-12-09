@@ -67,7 +67,7 @@ import org.candlepin.policy.js.entitlement.Enforcer.CallerType;
 import org.candlepin.policy.js.pool.PoolRules;
 import org.candlepin.policy.js.pool.PoolUpdate;
 import org.candlepin.resource.dto.AutobindData;
-import org.candlepin.resteasy.JsonProvider;
+import org.candlepin.resteasy.CustomResteasyJackson2Provider;
 import org.candlepin.service.SubscriptionServiceAdapter;
 import org.candlepin.service.model.CdnInfo;
 import org.candlepin.service.model.CertificateInfo;
@@ -81,14 +81,15 @@ import org.candlepin.util.Util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Iterables;
-import com.google.inject.Inject;
-import com.google.inject.persist.Transactional;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.xnap.commons.i18n.I18n;
 
 import java.util.ArrayList;
@@ -113,6 +114,7 @@ import javax.ws.rs.core.MediaType;
 /**
  * PoolManager
  */
+@Component
 public class CandlepinPoolManager implements PoolManager {
     private I18n i18n;
 
@@ -125,7 +127,10 @@ public class CandlepinPoolManager implements PoolManager {
     private EventFactory eventFactory;
     private Configuration config;
     private Enforcer enforcer;
+
+    @Autowired
     private PoolRules poolRules;
+
     private EntitlementCurator entitlementCurator;
     private ConsumerCurator consumerCurator;
     private ConsumerTypeCurator consumerTypeCurator;
@@ -142,10 +147,14 @@ public class CandlepinPoolManager implements PoolManager {
     private OwnerCurator ownerCurator;
     private OwnerProductCurator ownerProductCurator;
     private CdnCurator cdnCurator;
+
+    @Autowired
     private OwnerManager ownerManager;
+
     private BindChainFactory bindChainFactory;
 
-    @Inject protected JsonProvider jsonProvider;
+    @Autowired
+    protected CustomResteasyJackson2Provider jackson2Provider;
 
     /**
      * @param poolCurator
@@ -153,14 +162,13 @@ public class CandlepinPoolManager implements PoolManager {
      * @param eventFactory
      * @param config
      */
-    @Inject
+    @Autowired
     public CandlepinPoolManager(
         PoolCurator poolCurator,
         EventSink sink,
         EventFactory eventFactory,
         Configuration config,
         Enforcer enforcer,
-        PoolRules poolRules,
         EntitlementCurator entitlementCurator,
         ConsumerCurator consumerCurator,
         ConsumerTypeCurator consumerTypeCurator,
@@ -176,7 +184,6 @@ public class CandlepinPoolManager implements PoolManager {
         OwnerContentCurator ownerContentCurator,
         OwnerCurator ownerCurator,
         OwnerProductCurator ownerProductCurator,
-        OwnerManager ownerManager,
         CdnCurator cdnCurator,
         I18n i18n,
         BindChainFactory bindChainFactory) {
@@ -189,7 +196,7 @@ public class CandlepinPoolManager implements PoolManager {
         this.consumerCurator = consumerCurator;
         this.consumerTypeCurator = consumerTypeCurator;
         this.enforcer = enforcer;
-        this.poolRules = poolRules;
+        //this.poolRules = poolRules;
         this.entitlementCertificateCurator = entitlementCertCurator;
         this.ecGenerator = ecGenerator;
         this.complianceRules = complianceRules;
@@ -203,7 +210,7 @@ public class CandlepinPoolManager implements PoolManager {
         this.ownerContentCurator = ownerContentCurator;
         this.ownerCurator = ownerCurator;
         this.ownerProductCurator = ownerProductCurator;
-        this.ownerManager = ownerManager;
+        //this.ownerManager = ownerManager;
         this.cdnCurator = cdnCurator;
         this.i18n = i18n;
         this.bindChainFactory = bindChainFactory;
@@ -236,7 +243,7 @@ public class CandlepinPoolManager implements PoolManager {
         // we can simulate this in a testing environment.
         if (log.isTraceEnabled() || "TRACE".equalsIgnoreCase(owner.getLogLevel())) {
             try {
-                ObjectMapper mapper = this.jsonProvider
+                ObjectMapper mapper = this.jackson2Provider
                     .locateMapper(Object.class, MediaType.APPLICATION_JSON_TYPE);
 
                 log.trace("Received {} subscriptions from upstream:", subscriptionMap.size());

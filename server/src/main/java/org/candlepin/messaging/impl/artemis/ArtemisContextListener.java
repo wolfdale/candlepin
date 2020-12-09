@@ -18,37 +18,42 @@ import org.candlepin.common.config.Configuration;
 import org.candlepin.config.ConfigProperties;
 import org.candlepin.messaging.CPMContextListener;
 import org.candlepin.messaging.CPMException;
-
-import com.google.inject.Injector;
+import org.candlepin.messaging.CPMSessionFactory;
 
 import org.apache.activemq.artemis.api.core.client.ActiveMQClient;
 import org.apache.activemq.artemis.core.server.embedded.EmbeddedActiveMQ;
 import org.apache.activemq.artemis.spi.core.security.ActiveMQJAASSecurityManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
-
-import javax.inject.Singleton;
-
-
 
 /**
  * CPMContextListener implementation backed by Artemis
  */
-@Singleton
+//@Component
 public class ArtemisContextListener implements CPMContextListener {
     private static  Logger log = LoggerFactory.getLogger(ArtemisContextListener.class);
-
+    @Autowired
     private Configuration config;
     private EmbeddedActiveMQ activeMQServer;
+
+    /* TODO candlepin-spring: According to the guice configuration, factory should be a instance of
+        ArtemisSessionFactory, but in Spring there is a Bean created for CPMSessionFactory which is
+        getting bind to ArtemisSessionFactory. This needs to be confirmed if it okay to have
+        factory a instance of CPMSessionFactory here. */
+    @Autowired
+    private CPMSessionFactory factory;
+
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void initialize(Injector injector) throws CPMException {
-        this.config = injector.getInstance(Configuration.class);
+    //public void initialize(Injector injector) throws CPMException {
+    public void initialize() throws CPMException {
+        //this.config = injector.getInstance(Configuration.class);
 
         // Create the server if we're configured to do so.
         // TODO: Change this to use ACTIVEMQ_EMBEDDED_BROKER once configuration upgrades are in
@@ -87,6 +92,7 @@ public class ArtemisContextListener implements CPMContextListener {
             try {
                 this.activeMQServer.start();
                 log.info("Embedded Artemis server started successfully");
+                //System.out.println(this.activeMQServer.getActiveMQServer().getConfiguration());
             }
             catch (Exception e) {
                 log.error("Failed to start embedded Artemis message server", e);
@@ -95,7 +101,7 @@ public class ArtemisContextListener implements CPMContextListener {
         }
 
         // Initialize our session factory
-        ArtemisSessionFactory factory = injector.getInstance(ArtemisSessionFactory.class);
+        //ArtemisSessionFactory factory = injector.getInstance(ArtemisSessionFactory.class);
         factory.initialize();
     }
 

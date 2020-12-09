@@ -38,6 +38,7 @@ import javax.inject.Inject;
  * The JobMessageDispatcher is responsible for managing sessions to the backing messaging system,
  * and serializing messages as they're sent.
  */
+//@Component
 public class JobMessageDispatcher {
     private static Logger log = LoggerFactory.getLogger(JobMessageDispatcher.class);
 
@@ -63,6 +64,7 @@ public class JobMessageDispatcher {
      *  message bus
      */
     @Inject
+    //@Autowired
     public JobMessageDispatcher(Configuration config, CPMSessionFactory cpmSessionFactory,
         ObjectMapper objMapper) {
 

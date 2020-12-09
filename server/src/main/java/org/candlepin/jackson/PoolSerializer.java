@@ -40,6 +40,7 @@ import java.util.Set;
  * before default serialization of a Pool. Without disturbing other extensions
  * that we already have in serialization (filtering, Hateoas)
  */
+//@Component
 public class PoolSerializer extends BeanSerializerBase {
     private ProductCurator productCurator;
     private BeanSerializerBase base;

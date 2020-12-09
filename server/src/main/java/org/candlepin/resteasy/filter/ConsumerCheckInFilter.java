@@ -21,6 +21,7 @@ import org.candlepin.model.ConsumerCurator;
 import org.candlepin.resteasy.AnnotationLocator;
 
 import org.jboss.resteasy.core.ResteasyContext;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -39,6 +40,7 @@ import javax.ws.rs.ext.Provider;
  * will inspect the principal and if the principal is a ConsumerPrincipal, it will update
  * the consumer's check-in time.
  */
+@Component
 @Priority(Priorities.USER)
 @Provider
 public class ConsumerCheckInFilter implements ContainerRequestFilter {
@@ -53,6 +55,9 @@ public class ConsumerCheckInFilter implements ContainerRequestFilter {
 
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
+        /* TODO: spring- Remove this print statement */
+        System.out.println("ConsumerCheckInFilter");
+
         ResourceInfo resourceInfo = ResteasyContext.getContextData(ResourceInfo.class);
         Method method = resourceInfo.getResourceMethod();
 

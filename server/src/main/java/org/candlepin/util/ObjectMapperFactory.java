@@ -25,7 +25,6 @@ import com.fasterxml.jackson.module.jaxb.JaxbAnnotationIntrospector;
 import com.google.inject.Provider;
 
 
-
 /**
  * The ObjectMapperFactory provides methods for generating ObjectMappers with a standardized base
  * configuration needed by Candlepin. The factory may be used directly via static factory method,

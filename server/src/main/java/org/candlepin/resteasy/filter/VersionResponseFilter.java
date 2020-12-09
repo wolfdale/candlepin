@@ -16,6 +16,8 @@ package org.candlepin.resteasy.filter;
 
 import org.candlepin.common.util.VersionUtil;
 
+import org.springframework.stereotype.Component;
+
 import java.util.Map;
 
 import javax.annotation.Priority;
@@ -28,11 +30,15 @@ import javax.ws.rs.ext.Provider;
 /**
  * VersionResponseFilter
  */
+@Component
 @Provider
 @Priority(Priorities.HEADER_DECORATOR)
 public class VersionResponseFilter implements ContainerResponseFilter {
     @Override
     public void filter(ContainerRequestContext reqContext, ContainerResponseContext respContext) {
+        /* TODO: spring- Remove this print statement */
+        System.out.println("VersionResponseFilter");
+
         Map<String, String> map = VersionUtil.getVersionMap();
         respContext.getHeaders().add(VersionUtil.VERSION_HEADER,
             map.get("version") + "-" + map.get("release"));
