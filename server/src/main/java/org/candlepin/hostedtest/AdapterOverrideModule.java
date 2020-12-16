@@ -14,7 +14,10 @@
  */
 package org.candlepin.hostedtest;
 
+<<<<<<< HEAD
 import org.candlepin.service.CloudRegistrationAdapter;
+=======
+>>>>>>> a019cf872 (Added support for updating development pools and products during refresh)
 import org.candlepin.service.ProductServiceAdapter;
 import org.candlepin.service.SubscriptionServiceAdapter;
 

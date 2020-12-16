@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2009 - 2012 Red Hat, Inc.
+ * Copyright (c) 2009 - 2021 Red Hat, Inc.
  *
  * This software is licensed to you under the GNU General Public License,
  * version 2 (GPLv2). There is NO WARRANTY for this software, express or
@@ -101,14 +101,17 @@ public class HostedTestSubscriptionServiceAdapter implements SubscriptionService
     public Collection<? extends SubscriptionInfo> getSubscriptionsByProductId(String productId) {
         if (productId != null) {
             Predicate<SubscriptionInfo> predicate = sub -> {
-                if (sub.getProduct() != null && productId.equals(sub.getProduct().getId())) {
-                    return true;
-                }
+                ProductInfo pinfo = sub.getProduct();
+                if (pinfo != null) {
+                    if (productId.equals(pinfo.getId())) {
+                        return true;
+                    }
 
-                if (sub.getProvidedProducts() != null) {
-                    for (ProductInfo product : sub.getProvidedProducts()) {
-                        if (product != null && productId.equals(product.getId())) {
-                            return true;
+                    if (pinfo.getProvidedProducts() != null) {
+                        for (ProductInfo ppinfo : pinfo.getProvidedProducts()) {
+                            if (ppinfo != null && productId.equals(ppinfo.getId())) {
+                                return true;
+                            }
                         }
                     }
                 }

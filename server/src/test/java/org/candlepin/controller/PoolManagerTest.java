@@ -88,7 +88,11 @@ import org.candlepin.policy.js.entitlement.PreUnbindHelper;
 import org.candlepin.policy.js.pool.PoolRules;
 import org.candlepin.policy.js.pool.PoolUpdate;
 import org.candlepin.resource.dto.AutobindData;
+<<<<<<< HEAD
 import org.candlepin.resteasy.JsonProvider;
+=======
+import org.candlepin.service.ProductServiceAdapter;
+>>>>>>> a019cf872 (Added support for updating development pools and products during refresh)
 import org.candlepin.service.SubscriptionServiceAdapter;
 import org.candlepin.service.model.SubscriptionInfo;
 import org.candlepin.test.MockResultIterator;
@@ -136,6 +140,7 @@ import javax.inject.Provider;
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
     @Mock private PoolCurator mockPoolCurator;
+    @Mock private ProductServiceAdapter mockProdAdapter;
     @Mock private SubscriptionServiceAdapter mockSubAdapter;
     @Mock private ProductCurator mockProductCurator;
     @Mock private ProductManager mockProductManager;
@@ -427,7 +432,7 @@ import javax.inject.Provider;
 
         when(mockPoolCurator.listByOwnerAndTypes(eq(owner.getId()), any(PoolType.class))).thenReturn(pools);
 
-        this.manager.getRefresher(mockSubAdapter).add(owner).run();
+        this.manager.getRefresher(mockSubAdapter, mockProdAdapter).add(owner).run();
         List<Pool> expectedFloating = new LinkedList();
 
         // Make sure that only the floating pool was regenerated
@@ -465,7 +470,7 @@ import javax.inject.Provider;
 
         when(mockPoolCurator.listByOwnerAndTypes(eq(owner.getId()), any(PoolType.class))).thenReturn(pools);
 
-        this.manager.getRefresher(mockSubAdapter).add(owner).run();
+        this.manager.getRefresher(mockSubAdapter, mockProdAdapter).add(owner).run();
         List<Pool> expectedModified = new LinkedList();
 
         // Make sure that only the floating pool was regenerated
@@ -740,7 +745,7 @@ import javax.inject.Provider;
 
         Owner owner = getOwner();
         when(mockOwnerCurator.getByKey(owner.getKey())).thenReturn(owner);
-        this.manager.getRefresher(mockSubAdapter).add(owner).run();
+        this.manager.getRefresher(mockSubAdapter, mockProdAdapter).add(owner).run();
         List<Pool> poolsToDelete = Arrays.asList(p);
         verify(this.manager).deletePools(eq(poolsToDelete));
     }
@@ -773,7 +778,7 @@ import javax.inject.Provider;
         when(cqmock.list()).thenReturn(Collections.<Pool>emptyList());
         when(mockPoolCurator.getPoolsBySubscriptionIds(anyList())).thenReturn(cqmock);
 
-        this.manager.getRefresher(mockSubAdapter).add(owner).run();
+        this.manager.getRefresher(mockSubAdapter, mockProdAdapter).add(owner).run();
         List<Pool> delPools = Arrays.asList(p);
         verify(this.manager).deletePools(eq(delPools));
     }
@@ -802,7 +807,7 @@ import javax.inject.Provider;
 
         when(mockPoolCurator.listByOwnerAndTypes(eq(owner.getId()), any(PoolType.class))).thenReturn(pools);
 
-        this.manager.getRefresher(mockSubAdapter).add(owner).run();
+        this.manager.getRefresher(mockSubAdapter, mockProdAdapter).add(owner).run();
         verify(this.manager, never()).deletePool(same(p));
     }
 
@@ -829,7 +834,7 @@ import javax.inject.Provider;
 
         Owner owner = getOwner();
         when(mockOwnerCurator.getByKey(owner.getKey())).thenReturn(owner);
-        this.manager.getRefresher(mockSubAdapter).add(owner).run();
+        this.manager.getRefresher(mockSubAdapter, mockProdAdapter).add(owner).run();
         verify(this.manager, never()).deletePool(same(p));
     }
 
@@ -855,7 +860,7 @@ import javax.inject.Provider;
         Owner owner = getOwner();
         when(mockOwnerCurator.getByKey(owner.getKey())).thenReturn(owner);
 
-        this.manager.getRefresher(mockSubAdapter).add(owner).run();
+        this.manager.getRefresher(mockSubAdapter, mockProdAdapter).add(owner).run();
         verify(this.manager, never()).deletePool(same(p));
     }
 
@@ -881,7 +886,7 @@ import javax.inject.Provider;
 
         when(mockPoolCurator.listByOwnerAndTypes(eq(owner.getId()), any(PoolType.class))).thenReturn(pools);
 
-        this.manager.getRefresher(mockSubAdapter).add(owner).run();
+        this.manager.getRefresher(mockSubAdapter, mockProdAdapter).add(owner).run();
         ArgumentCaptor<List> poolCaptor = ArgumentCaptor.forClass(List.class);
         verify(this.poolRulesMock).updatePools(poolCaptor.capture(), anyMap());
         assertEquals(1, poolCaptor.getValue().size());
@@ -924,7 +929,7 @@ import javax.inject.Provider;
         when(cqmock.list()).thenReturn(Collections.emptyList());
         when(mockPoolCurator.getPoolsBySubscriptionId(anyString())).thenReturn(cqmock);
 
-        this.manager.getRefresher(mockSubAdapter).add(owner).run();
+        this.manager.getRefresher(mockSubAdapter, mockProdAdapter).add(owner).run();
 
         assertPoolsAreEqual(TestUtil.copyFromSub(s), argPool.getValue());
         verify(this.mockPoolCurator, times(1)).create(any(Pool.class));
@@ -968,8 +973,13 @@ import javax.inject.Provider;
 
         when(mockPoolCurator.listByOwnerAndTypes(eq(owner.getId()), any(PoolType.class))).thenReturn(pools);
 
+<<<<<<< HEAD
         this.manager.getRefresher(mockSubAdapter).add(owner).run();
         verify(poolRulesMock).createAndEnrichPools(argPool.capture(), anyList());
+=======
+        this.manager.getRefresher(mockSubAdapter, mockProdAdapter).add(owner).run();
+        verify(poolRulesMock).createAndEnrichPools(argPool.capture(), any(List.class));
+>>>>>>> a019cf872 (Added support for updating development pools and products during refresh)
         assertPoolsAreEqual(TestUtil.copyFromSub(s), argPool.getValue());
     }
 
@@ -1263,7 +1273,7 @@ import javax.inject.Provider;
         // Any positive value is acceptable here
         when(entitlementCurator.getInBlockSize()).thenReturn(50);
 
-        this.manager.getRefresher(mockSubAdapter).add(owner).run();
+        this.manager.getRefresher(mockSubAdapter, mockProdAdapter).add(owner).run();
 
         verify(mockPoolCurator).batchDelete(eq(pools), anyCollection());
         verify(entitlementCurator).batchDeleteByIds(eq(new HashSet<>(Arrays.asList(ent.getId()))));
@@ -1459,7 +1469,7 @@ import javax.inject.Provider;
 
         when(mockPoolCurator.listByOwnerAndTypes(eq(owner.getId()), any(PoolType.class))).thenReturn(pools);
 
-        this.manager.getRefresher(mockSubAdapter).add(owner).run();
+        this.manager.getRefresher(mockSubAdapter, mockProdAdapter).add(owner).run();
 
         // The pool left over from the pre-migrated subscription should be deleted
         // and granted entitlements should be revoked
