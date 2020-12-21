@@ -539,9 +539,9 @@ public class ConsumerResourceTest {
 
         when(ak.getId()).thenReturn("testKey");
         when(activationKeyCurator.getByKeyName(eq(owner), eq(owner.getKey()))).thenReturn(ak);
-
+        when(this.principalProvider.get()).thenReturn(nap);
         assertThrows(BadRequestException.class, () ->
-            consumerResource.create(consumerDto, nap, null, owner.getKey(), "testKey", true)
+            consumerResource.createConsumer(consumerDto, null, owner.getKey(), "testKey", true)
         );
     }
 
@@ -556,7 +556,7 @@ public class ConsumerResourceTest {
         when(entitler.bindByProducts(any(AutobindData.class))).thenReturn(null);
         when(ownerCurator.findOwnerById(eq(o.getId()))).thenReturn(o);
 
-        Response r = consumerResource.bind("fakeConsumer", null, prodIds,
+        Response r = consumerResource.bind("fakeConsumer", null, Arrays.asList(prodIds),
             null, null, null, false, null, null);
         assertEquals(null, r.getEntity());
     }
@@ -617,7 +617,7 @@ public class ConsumerResourceTest {
         Consumer c = createConsumer(createOwner());
         when(consumerCurator.verifyAndLookupConsumerWithEntitlements(eq(c.getUuid()))).thenReturn(c);
         assertThrows(BadRequestException.class, () -> consumerResource.bind(c.getUuid(), "fake pool uuid",
-            new String[]{"12232"}, 1, null, null, false, null, null)
+            Arrays.asList("12232"), 1, null, null, false, null, null)
         );
     }
 
@@ -663,10 +663,10 @@ public class ConsumerResourceTest {
         UserPrincipal up = mock(UserPrincipal.class);
 
         when(up.canAccess(eq(owner), eq(SubResource.CONSUMERS), eq(Access.CREATE))).thenReturn(true);
-
+        when(this.principalProvider.get()).thenReturn(up);
         // usa.findByLogin() will return null by default no need for a when
         assertThrows(NotFoundException.class, () ->
-            consumerResource.create(consumerDto, up, null, owner.getKey(), null, true)
+            consumerResource.createConsumer(consumerDto, null, owner.getKey(), null, true)
         );
     }
 
@@ -683,9 +683,10 @@ public class ConsumerResourceTest {
         UserPrincipal up = mock(UserPrincipal.class);
 
         when(up.canAccess(eq(owner), eq(SubResource.CONSUMERS), eq(Access.CREATE))).thenReturn(true);
+        when(this.principalProvider.get()).thenReturn(up);
 
         BadRequestException ex = assertThrows(BadRequestException.class, () ->
-            consumerResource.create(consumerDto, up, null, owner.getKey(), null, false)
+            consumerResource.createConsumer(consumerDto, null, owner.getKey(), null, false)
         );
         assertEquals(String.format("Name of the consumer should be shorter than %d characters.",
             Consumer.MAX_LENGTH_OF_CONSUMER_NAME + 1), ex.getMessage());
@@ -730,7 +731,8 @@ public class ConsumerResourceTest {
     @Test
     public void testFetchAllConsumers() {
         assertThrows(BadRequestException.class, () ->
-            consumerResource.list(null, null, null, null, null, null, null)
+            consumerResource.searchConsumers(null, null, null,
+            null, null, null)
         );
     }
 
@@ -747,11 +749,12 @@ public class ConsumerResourceTest {
             nullable(List.class), nullable(List.class), nullable(List.class), anyList(),
             anyList(), anyList())).thenReturn(cqmock);
         when(cqmock.transform(any(ElementTransformer.class))).thenReturn(cqmock);
+        CandlepinQuery<ConsumerDTOArrayElement> result = consumerResource
+            .searchConsumers("TaylorSwift", null, null,
+            null, null, null);
 
-        List<ConsumerDTOArrayElement> result = consumerResource
-            .list("TaylorSwift", null, null, null, null, null, null)
-            .list();
-        assertEquals(consumers, result);
+        assertNotNull(result);
+        assertEquals(consumers, result.list());
     }
 
     public void testFetchAllConsumersForOwner() {
@@ -766,15 +769,15 @@ public class ConsumerResourceTest {
             anyList(), anyList(), anyList(), anyList(), anyList(),
             anyList())).thenReturn(cqmock);
 
-        List<ConsumerDTOArrayElement> result = consumerResource.list(null, null, "taylorOwner",
-            null, null, null, null).list();
+        Iterable<ConsumerDTOArrayElement> result = consumerResource.searchConsumers(null, null, "taylorOwner",
+            null, null, null);
         assertEquals(consumers, result);
     }
 
     @Test
     public void testFetchAllConsumersForEmptyUUIDs() {
         assertThrows(BadRequestException.class, () ->
-            consumerResource.list(null, null, null, new ArrayList<>(), null, null, null)
+            consumerResource.searchConsumers(null, null, null, new ArrayList<>(), null, null)
         );
     }
 
@@ -800,9 +803,11 @@ public class ConsumerResourceTest {
 
         List<String> uuids = new ArrayList<>();
         uuids.add("swiftuuid");
-        List<ConsumerDTOArrayElement> result = consumerResource.list(null, null,
-            null, uuids, null, null, null).list();
-        assertEquals(consumers, result);
+        CandlepinQuery<ConsumerDTOArrayElement> result = consumerResource.searchConsumers(null, null,
+            null, uuids, null, null);
+
+        assertNotNull(result);
+        assertEquals(consumers, result.list());
     }
 
     @Test
@@ -862,7 +867,7 @@ public class ConsumerResourceTest {
 
         when(cdnCurator.getByLabel(eq(cdn.getLabel()))).thenReturn(cdn);
 
-        consumerResource.exportDataAsync(null, consumer.getUuid(), cdn.getLabel(),
+        consumerResource.exportDataAsync(consumer.getUuid(), cdn.getLabel(),
             "prefix", cdn.getUrl(), extParams);
         verify(manifestManager).generateManifestAsync(eq(consumer.getUuid()), eq(owner),
             eq(cdn.getLabel()), eq("prefix"), eq(cdn.getUrl()), anyMap());
@@ -877,7 +882,7 @@ public class ConsumerResourceTest {
         when(uap.canAccess(any(Object.class), any(SubResource.class), any(Access.class)))
             .thenReturn(Boolean.TRUE);
 
-        assertThrows(GoneException.class, () -> consumerResource.deleteConsumer(targetConsumerUuid, uap));
+        assertThrows(GoneException.class, () -> consumerResource.deleteConsumer(targetConsumerUuid));
     }
 
     @Test
@@ -892,7 +897,7 @@ public class ConsumerResourceTest {
         when(uap.canAccess(any(Object.class), any(SubResource.class), any(Access.class)))
             .thenReturn(Boolean.TRUE);
 
-        assertThrows(GoneException.class, () -> consumerResource.deleteConsumer(consumer.getUuid(), uap));
+        assertThrows(GoneException.class, () -> consumerResource.deleteConsumer(consumer.getUuid()));
     }
 
     @Test
@@ -907,7 +912,7 @@ public class ConsumerResourceTest {
             .thenReturn(Boolean.TRUE);
 
         assertThrows(OptimisticLockException.class, () ->
-            consumerResource.deleteConsumer(consumer.getUuid(), uap)
+            consumerResource.deleteConsumer(consumer.getUuid())
         );
     }
 
