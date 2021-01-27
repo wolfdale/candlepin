@@ -32,7 +32,9 @@ public class CandlepinCapabilities extends HashSet<String> {
         "remove_by_pool_id", "batch_bind", "org_level_content_access", "syspurpose", "hypervisors_heartbeat",
         "insights_auto_register"};
 
-    public static final String KEYCLOAK_AUTH_CAPBILITY = "keycloak_auth";
+    public static final String KEYCLOAK_AUTH_CAPABILITY = "keycloak_auth";
+
+    public static final String CLOUD_REGISTRATION_CAPABILITY = "cloud_registration";
 
     private static CandlepinCapabilities capabilities;
 
