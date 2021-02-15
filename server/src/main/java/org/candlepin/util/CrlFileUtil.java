@@ -420,7 +420,7 @@ public class CrlFileUtil {
         // First clean up any serials that are already expired, revoked and not collected
         // as these serials do not need to be processed and do not ever need to hit the CRL.
         int deleted = certificateSerialCurator.deleteRevokedExpiredAndNotCollectedSerials();
-        log.debug("Deleted {} cert serials that were expired, revoked and not yet collected.", deleted);
+        log.debug("Deleted {} cert serials that were expired, revoked, and not yet collected.", deleted);
 
         int totalProcessed = 0;
         boolean moreToProcess = true;

@@ -194,6 +194,7 @@ public class JSSX509CRLStreamWriter extends AbstractX509CRLStreamWriter {
             if (!reaperStream.hasNext()) {
                 emptyCrl = true;
                 preScanned = true;
+
                 return this;
             }
 
