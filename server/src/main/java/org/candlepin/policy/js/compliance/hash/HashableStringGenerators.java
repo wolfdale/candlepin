@@ -211,7 +211,15 @@ public class HashableStringGenerators {
             }
 
             String generated = target.getUuid();
-            generated += generateFromCollection(target.getFacts().entrySet(), STRING_ENTRY);
+
+            if (target.getFacts() != null) {
+                generated += generateFromCollection(target.getFacts().entrySet(), STRING_ENTRY);
+            }
+            else {
+                // Append null if consumer facts are null.
+                generated += "null";
+            }
+
             generated += generateFromCollection(target.getInstalledProducts(), INSTALLED_PRODUCT);
             generated += generateFromCollection(target.getEntitlements(), ENTITLEMENT);
             return generated;
