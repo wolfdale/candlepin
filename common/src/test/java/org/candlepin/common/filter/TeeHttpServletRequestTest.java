@@ -35,6 +35,7 @@ import java.io.Reader;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.ReadListener;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MediaType;
@@ -52,6 +53,21 @@ public class TeeHttpServletRequestTest {
         final ByteArrayInputStream bais =
             new ByteArrayInputStream("this is my body".getBytes());
         when(request.getInputStream()).thenReturn(new ServletInputStream() {
+            @Override
+            public boolean isFinished() {
+                return false;
+            }
+
+            @Override
+            public boolean isReady() {
+                return false;
+            }
+
+            @Override
+            public void setReadListener(ReadListener readListener) {
+
+            }
+
             public int read() throws IOException {
                 return bais.read();
             }

@@ -6,6 +6,9 @@ description = "Candlepin Server"
 
 apply plugin: "war"
 apply plugin: Gettext
+apply plugin: 'java'
+apply plugin: 'org.springframework.boot'
+
 
 // Copy the resources to the main classes directory so that the
 // persistence context is in the the same classpath entry for
@@ -15,6 +18,10 @@ sourceSets.main.output.resourcesDir = new File(buildDir, "classes/java/main")
 project.getTasks().getByName("gettext").dependsOn(":candlepin-common:gettext")
 gettext {
     keys_project_dir = "${project.rootDir}/common"
+}
+
+configurations {
+    compile.exclude module: 'spring-boot-starter-logging'
 }
 
 // substitute the version & release in the version.properties used by the status resource at runtime
@@ -69,14 +76,18 @@ ext {
         "true".equals(project.findProperty("async_scheduler_enabled"))
 }
 
-war {
+
+bootWar {
+    mainClassName = 'org.candlepin.BootApplication'
     if (!hostedtest) {
         rootSpec.exclude("**/hostedtest/**")
     }
     manifest {
         attributes(
             "Implementation-Title": "The Candlepin Project",
-            "Copyright": "Red Hat, Inc. 2009-" + new Date().format("y")
+            "Copyright": "Red Hat, Inc. 2009-" + new Date().format("y"),
+            "Main-Class": "org.springframework.boot.loader.PropertiesLauncher",
+            "Loader-Path": "/usr/lib/java/jss4.jar,WEB-INF/lib-provided,WEB-INF/lib,WEB-INF/classes"
         )
     }
     // Copy the license file into place in the final manifest
@@ -155,6 +166,7 @@ dependencies {
     implementation libraries.collections
     implementation libraries.gettext
     implementation libraries.guice
+    implementation libraries.spring
     implementation libraries.jackson
     implementation libraries.javax
     implementation libraries.liquibase
