@@ -3,7 +3,7 @@
 
     <display-name>Candlepin</display-name>
 
-    <filter>
+    <!--<filter>
         <filter-name>Guice Filter</filter-name>
         <filter-class>com.google.inject.servlet.GuiceFilter</filter-class>
     </filter>
@@ -19,7 +19,7 @@
     </listener>
 
     <context-param>
-        <!--
+        &lt;!&ndash;
             RestEasy tries to dynamically determine what to use for logging in its
             org.jboss.resteasy.logging.Logger class.  It chooses between commons-logging,
             log4j, and slf4j by looking for implementation specific classes on the
@@ -30,7 +30,7 @@
             For more reading on class loaders and logging see http://articles.qos.ch/classloader.html
 
             Also see http://docs.jboss.org/resteasy/docs/2.3.1.GA/userguide/html/Installation_Configuration.html#RESTEasyLogging
-         -->
+         &ndash;&gt;
         <param-name>resteasy.logger.type</param-name>
         <param-value>SLF4J</param-value>
     </context-param>
@@ -38,5 +38,5 @@
     <login-config>
         <auth-method>CLIENT-CERT</auth-method>
         <realm-name>candlepin</realm-name>
-    </login-config>
+    </login-config>-->
 </web-app>

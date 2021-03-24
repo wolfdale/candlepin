@@ -33,7 +33,6 @@ import org.candlepin.model.ConsumerCurator;
 import org.candlepin.model.DeletedConsumerCurator;
 import org.candlepin.resteasy.AnnotationLocator;
 
-import com.google.inject.Inject;
 import com.google.inject.Injector;
 
 import io.swagger.jaxrs.listing.ApiListingResource;
@@ -42,6 +41,8 @@ import org.jboss.resteasy.core.ResteasyContext;
 import org.jboss.resteasy.spi.HttpRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -62,6 +63,7 @@ import javax.ws.rs.ext.Provider;
 /**
  * The AuthenticationFilter is responsible for populating the JAXRS SecurityContext
  */
+@Component
 @Priority(Priorities.AUTHENTICATION)
 @Provider
 public class AuthenticationFilter implements ContainerRequestFilter {
@@ -76,7 +78,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
     private AnnotationLocator annotationLocator;
     private List<AuthProvider> providers = new ArrayList<>();
 
-    @Inject
+    @Autowired
     public AuthenticationFilter(Configuration config,
         ConsumerCurator consumerCurator,
         DeletedConsumerCurator deletedConsumerCurator,

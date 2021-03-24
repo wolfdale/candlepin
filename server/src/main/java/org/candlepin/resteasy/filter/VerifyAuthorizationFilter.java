@@ -26,12 +26,12 @@ import org.candlepin.model.Persisted;
 import org.candlepin.resteasy.AnnotationLocator;
 import org.candlepin.util.Util;
 
-import com.google.inject.Inject;
-
 import org.jboss.resteasy.core.ResteasyContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.xnap.commons.i18n.I18n;
 
 import java.lang.annotation.Annotation;
@@ -62,6 +62,7 @@ import javax.ws.rs.container.ResourceInfo;
  * this class.  That is because the AuthorizationFeature takes care of registering this filter
  * to the appropriate methods at servlet initialization time.
  */
+@Component
 @Priority(Priorities.AUTHORIZATION)
 public class VerifyAuthorizationFilter extends AbstractAuthorizationFilter {
     private static final Logger log = LoggerFactory.getLogger(VerifyAuthorizationFilter.class);
@@ -69,7 +70,7 @@ public class VerifyAuthorizationFilter extends AbstractAuthorizationFilter {
     private StoreFactory storeFactory;
     private AnnotationLocator annotationLocator;
 
-    @Inject
+    @Autowired
     public VerifyAuthorizationFilter(javax.inject.Provider<I18n> i18nProvider, StoreFactory storeFactory,
         AnnotationLocator annotationLocator) {
 

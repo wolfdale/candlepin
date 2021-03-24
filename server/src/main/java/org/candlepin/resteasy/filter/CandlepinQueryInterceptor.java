@@ -19,21 +19,24 @@ import org.candlepin.common.paging.PageRequest;
 import org.candlepin.model.AbstractHibernateObject;
 import org.candlepin.model.CandlepinQuery;
 import org.candlepin.model.ResultIterator;
-import org.candlepin.resteasy.JsonProvider;
+import org.candlepin.resteasy.CustomResteasyJackson2Provider;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.jboss.resteasy.core.ResteasyContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.Objects;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceContext;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.container.ContainerResponseFilter;
@@ -46,16 +49,21 @@ import javax.ws.rs.core.StreamingOutput;
  * The CandlepinQueryInterceptor handles the streaming of a query and applies any paging
  * configuration.
  */
+@Component
 @javax.ws.rs.ext.Provider
 public class CandlepinQueryInterceptor implements ContainerResponseFilter {
 
-    protected final JsonProvider jsonProvider;
+    protected final CustomResteasyJackson2Provider jackson2Provider;
     protected final Provider<EntityManager> emProvider;
+    @Autowired
+    private EntityManagerFactory entityManagerFactory;
+    @PersistenceContext
+    public EntityManager entityManager;
 
-    @Inject
-    public CandlepinQueryInterceptor(
-        final JsonProvider jsonProvider, final Provider<EntityManager> emProvider) {
-        this.jsonProvider = Objects.requireNonNull(jsonProvider);
+    @Autowired
+    public CandlepinQueryInterceptor(final CustomResteasyJackson2Provider jackson2Provider,
+        final Provider<EntityManager> emProvider) {
+        this.jackson2Provider = Objects.requireNonNull(jackson2Provider);
         this.emProvider = Objects.requireNonNull(emProvider);
     }
 
@@ -65,14 +73,23 @@ public class CandlepinQueryInterceptor implements ContainerResponseFilter {
      * @return a newly opened session
      */
     protected Session openSession() {
-        Session currentSession = (Session) this.emProvider.get().getDelegate();
-        SessionFactory factory = currentSession.getSessionFactory();
-
-        return factory.openSession();
+//        Session currentSession = (Session) this.emProvider.get().getDelegate();
+//        SessionFactory factory = currentSession.getSessionFactory();
+//        return factory.openSession();
+        Session session;
+        System.out.println("Candlepin Query Interceptor: opening a fresh session");
+        session = entityManagerFactory.unwrap(SessionFactory.class).openSession();
+        return session;
+//        Session currentSession = entityManager.unwrap(Session.class);
+//        SessionFactory sessionFactory = currentSession.getSessionFactory();
+//        return sessionFactory.openSession();
     }
 
     @Override
     public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) {
+        /* TODO: spring- Remove this print statement */
+        System.out.println("CandlepinQueryInterceptor");
+
         Object entity = responseContext.getEntity();
 
         if (entity instanceof CandlepinQuery) {

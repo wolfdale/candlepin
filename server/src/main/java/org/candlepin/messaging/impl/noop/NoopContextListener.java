@@ -34,7 +34,7 @@ public class NoopContextListener implements CPMContextListener {
      * {@inheritDoc}
      */
     @Override
-    public void initialize(Injector injector) throws CPMException {
+    public void initialize() throws CPMException {
         // Intentionally left empty
     }
 

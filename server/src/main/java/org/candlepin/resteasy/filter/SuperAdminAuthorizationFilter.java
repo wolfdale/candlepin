@@ -16,11 +16,11 @@ package org.candlepin.resteasy.filter;
 
 import org.candlepin.auth.Principal;
 
-import com.google.inject.Inject;
-
 import org.jboss.resteasy.core.ResteasyContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.xnap.commons.i18n.I18n;
 
 import java.lang.reflect.Method;
@@ -36,11 +36,12 @@ import javax.ws.rs.container.ResourceInfo;
  * That is because the AuthorizationFeature takes care of registering
  * this filter to the appropriate methods at servlet initialization time.
  */
+@Component
 @Priority(Priorities.AUTHORIZATION)
 public class SuperAdminAuthorizationFilter extends AbstractAuthorizationFilter {
     private static final Logger log = LoggerFactory.getLogger(SuperAdminAuthorizationFilter.class);
 
-    @Inject
+    @Autowired
     public SuperAdminAuthorizationFilter(javax.inject.Provider<I18n> i18nProvider) {
         this.i18nProvider = i18nProvider;
     }

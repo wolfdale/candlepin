@@ -35,7 +35,7 @@ public interface CPMContextListener {
      * @throws CPMException
      *  if
      */
-    void initialize(Injector injector) throws CPMException;
+    void initialize() throws CPMException;
 
     /**
      * Called when the Candlepin context is destroyed, indicating the messaging implementation

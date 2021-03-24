@@ -14,12 +14,11 @@
  */
 package org.candlepin.servlet.filter;
 
-import com.google.inject.Inject;
-import com.google.inject.persist.UnitOfWork;
+import org.springframework.core.annotation.Order;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
-import javax.inject.Singleton;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -31,24 +30,26 @@ import javax.servlet.ServletResponse;
  * CandlepinPersistFilter Custom servlet filter for guice-persist that doesn't
  * initialize the persistence service
  */
-@Singleton
+@Component
+@Order(2)
 public class CandlepinPersistFilter implements Filter {
-    private UnitOfWork unitOfWork;
+    //private UnitOfWork unitOfWork;
 
-    @Inject
-    public CandlepinPersistFilter(UnitOfWork unitOfWork) {
-        this.unitOfWork = unitOfWork;
-    }
+    //@Inject
+//    @Autowired
+//    public CandlepinPersistFilter(UnitOfWork unitOfWork) {
+//        this.unitOfWork = unitOfWork;
+//    }
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response,
         FilterChain chain) throws IOException, ServletException {
-        unitOfWork.begin();
+        //unitOfWork.begin();
         try {
             chain.doFilter(request, response);
         }
         finally {
-            unitOfWork.end();
+            //unitOfWork.end();
         }
     }
 

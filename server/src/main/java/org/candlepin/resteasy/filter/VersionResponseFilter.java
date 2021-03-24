@@ -16,6 +16,8 @@ package org.candlepin.resteasy.filter;
 
 import org.candlepin.common.util.VersionUtil;
 
+import org.springframework.stereotype.Component;
+
 import java.util.Map;
 
 import javax.annotation.Priority;
@@ -28,6 +30,7 @@ import javax.ws.rs.ext.Provider;
 /**
  * VersionResponseFilter
  */
+@Component
 @Provider
 @Priority(Priorities.HEADER_DECORATOR)
 public class VersionResponseFilter implements ContainerResponseFilter {
