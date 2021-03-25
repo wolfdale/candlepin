@@ -24,9 +24,7 @@ import org.candlepin.config.DatabaseConfigFactory;
 import org.candlepin.guice.PrincipalProvider;
 
 import com.google.common.collect.Iterables;
-import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.google.inject.persist.Transactional;
 
 import org.hibernate.Criteria;
 import org.hibernate.LockMode;
@@ -47,6 +45,8 @@ import org.hibernate.query.NativeQuery;
 import org.hibernate.transform.ResultTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.xnap.commons.i18n.I18n;
 
 import java.io.Serializable;
@@ -81,11 +81,11 @@ import javax.persistence.criteria.Root;
 public abstract class AbstractHibernateCurator<E extends Persisted> {
     private static Logger log = LoggerFactory.getLogger(AbstractHibernateCurator.class);
 
-    @Inject protected CandlepinQueryFactory cpQueryFactory;
-    @Inject protected Provider<EntityManager> entityManager;
-    @Inject protected Provider<I18n> i18nProvider;
-    @Inject protected Configuration config;
-    @Inject private PrincipalProvider principalProvider;
+    @Autowired protected CandlepinQueryFactory cpQueryFactory;
+    @Autowired protected Provider<EntityManager> entityManager;
+    @Autowired protected Provider<I18n> i18nProvider;
+    @Autowired protected Configuration config;
+    @Autowired private PrincipalProvider principalProvider;
 
     private final Class<E> entityType;
     private NaturalIdLoadAccess<E> natIdLoader;

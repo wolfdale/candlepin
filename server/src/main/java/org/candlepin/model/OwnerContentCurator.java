@@ -23,6 +23,8 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -50,7 +52,7 @@ import javax.persistence.criteria.Root;
  * The OwnerContentCurator provides functionality for managing the mapping between owners and
  * content.
  */
-@Singleton
+@Component
 public class OwnerContentCurator extends AbstractHibernateCurator<OwnerContent> {
     private static Logger log = LoggerFactory.getLogger(OwnerContentCurator.class);
 

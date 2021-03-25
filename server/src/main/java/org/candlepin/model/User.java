@@ -106,7 +106,8 @@ public class User extends AbstractHibernateObject implements UserInfo {
     @ApiModelProperty(readOnly = true)
     private String id;
 
-    @ManyToMany(targetEntity = Role.class, mappedBy = "users")
+    // TODO: spring-guice FetchType.EAGER was added to avoid the lazy initialization error
+    @ManyToMany(targetEntity = Role.class, mappedBy = "users", fetch = FetchType.EAGER)
     private Set<Role> roles = new HashSet<>();
 
     @Column(nullable = false, unique = true)

@@ -16,14 +16,12 @@ package org.candlepin.model.activationkeys;
 
 import org.candlepin.model.ContentOverrideCurator;
 
-import javax.inject.Singleton;
-
-
+import org.springframework.stereotype.Component;
 
 /**
  * ActivationKeyContentOverrideCurator
  */
-@Singleton
+@Component
 public class ActivationKeyContentOverrideCurator extends
     ContentOverrideCurator<ActivationKeyContentOverride, ActivationKey> {
 
