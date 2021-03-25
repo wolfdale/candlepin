@@ -24,15 +24,11 @@ import org.candlepin.model.OwnerContentCurator;
 import org.candlepin.model.OwnerProductCurator;
 import org.candlepin.model.ProductCurator;
 
-import com.google.inject.Inject;
-import com.google.inject.persist.Transactional;
-
-import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.List;
-import java.util.Set;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.LockModeType;
 
@@ -42,6 +38,7 @@ import javax.persistence.LockModeType;
  * The OrphanCleanupJob searches for orphaned entities (products and content and the time of
  * writing) and removes them.
  */
+@Component
 public class OrphanCleanupJob implements AsyncJob  {
     private static Logger log = LoggerFactory.getLogger(OrphanCleanupJob.class);
 
@@ -56,7 +53,7 @@ public class OrphanCleanupJob implements AsyncJob  {
     private ProductCurator productCurator;
     private OwnerProductCurator ownerProductCurator;
 
-    @Inject
+    @Autowired
     public OrphanCleanupJob(ContentCurator contentCurator, OwnerContentCurator ownerContentCurator,
         ProductCurator productCurator, OwnerProductCurator ownerProductCurator) {
 

@@ -28,8 +28,6 @@ import org.candlepin.model.Pool;
 import org.candlepin.model.dto.Subscription;
 import org.candlepin.service.SubscriptionServiceAdapter;
 
-import com.google.inject.Inject;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -40,6 +38,9 @@ import io.swagger.annotations.Authorization;
 import org.jboss.resteasy.annotations.providers.jaxb.DoNotUseJAXBProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.xnap.commons.i18n.I18n;
 
 import java.util.HashSet;
@@ -64,6 +65,8 @@ import javax.ws.rs.core.Response.Status;
 /**
  * SubscriptionResource
  */
+@Component
+@Transactional
 @Path("/subscriptions")
 @Api(value = "subscriptions", authorizations = { @Authorization("basic") })
 @Consumes(MediaType.APPLICATION_JSON)
@@ -77,7 +80,8 @@ public class SubscriptionResource {
 
     private I18n i18n;
 
-    @Inject
+    //@Inject
+    @Autowired
     public SubscriptionResource(SubscriptionServiceAdapter subService,
         ConsumerCurator consumerCurator, PoolManager poolManager, ContentAccessManager contentAccessManager,
         I18n i18n) {

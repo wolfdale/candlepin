@@ -25,11 +25,11 @@ import org.candlepin.service.model.ContentInfo;
 import org.candlepin.service.model.ProductInfo;
 import org.candlepin.util.Util;
 
-import com.google.inject.Inject;
-import com.google.inject.persist.Transactional;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -46,6 +46,7 @@ import java.util.Objects;
  * The methods provided by this class are the prefered methods to use for CRUD operations on
  * content, to ensure content versioning and linking is handled properly.
  */
+@Component
 public class ContentManager {
     private static final Logger log = LoggerFactory.getLogger(ContentManager.class);
 
@@ -56,7 +57,7 @@ public class ContentManager {
     private final OwnerContentCurator ownerContentCurator;
     private final OwnerProductCurator ownerProductCurator;
 
-    @Inject
+    @Autowired
     public ContentManager(ContentAccessManager contentAccessManager, ProductManager productManager,
         ContentCurator contentCurator, OwnerContentCurator ownerContentCurator,
         OwnerProductCurator ownerProductCurator) {

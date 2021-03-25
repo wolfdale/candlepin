@@ -27,13 +27,13 @@ import org.candlepin.model.ProductCurator;
 import org.candlepin.model.SourceSubscription;
 import org.candlepin.service.model.SubscriptionInfo;
 
-import com.google.inject.Inject;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -52,17 +52,19 @@ import java.util.stream.Collectors;
 /**
  * Rules for creation and updating of pools during a refresh pools operation.
  */
+@Component
 public class PoolRules {
 
     private static final Logger log = LoggerFactory.getLogger(PoolRules.class);
 
+    @Autowired
     private final PoolManager poolManager;
     private final Configuration config;
     private final EntitlementCurator entCurator;
     private final OwnerProductCurator ownerProductCurator;
     private final ProductCurator productCurator;
 
-    @Inject
+    @Autowired
     public PoolRules(PoolManager poolManager, Configuration config, EntitlementCurator entCurator,
         OwnerProductCurator ownerProductCurator, ProductCurator productCurator) {
 

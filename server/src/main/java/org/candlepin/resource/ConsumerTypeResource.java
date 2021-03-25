@@ -22,8 +22,6 @@ import org.candlepin.model.CandlepinQuery;
 import org.candlepin.model.ConsumerType;
 import org.candlepin.model.ConsumerTypeCurator;
 
-import com.google.inject.Inject;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -34,6 +32,9 @@ import io.swagger.annotations.Authorization;
 import org.jboss.resteasy.annotations.providers.jaxb.Wrapped;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.xnap.commons.i18n.I18n;
 
 import javax.ws.rs.Consumes;
@@ -51,6 +52,8 @@ import javax.ws.rs.core.MediaType;
 /**
  * Access Path for consumer types
  */
+@Component
+@Transactional
 @Path("/consumertypes")
 @Api(value = "consumertypes", authorizations = { @Authorization("basic") })
 public class ConsumerTypeResource {
@@ -60,7 +63,8 @@ public class ConsumerTypeResource {
     private I18n i18n;
     private ModelTranslator translator;
 
-    @Inject
+    //@Inject
+    @Autowired
     public ConsumerTypeResource(ConsumerTypeCurator consumerTypeCurator, I18n i18n,
         ModelTranslator translator) {
 

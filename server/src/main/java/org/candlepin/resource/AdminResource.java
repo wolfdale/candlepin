@@ -26,14 +26,15 @@ import org.candlepin.model.UserCurator;
 import org.candlepin.service.UserServiceAdapter;
 import org.candlepin.service.impl.DefaultUserServiceAdapter;
 
-import com.google.inject.Inject;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
 import org.jboss.resteasy.core.ResteasyContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -45,6 +46,8 @@ import javax.ws.rs.core.MediaType;
 /**
  * Candlepin server administration REST calls.
  */
+@Component
+@Transactional
 @Path("/admin")
 @Api("admin")
 public class AdminResource {
@@ -57,7 +60,8 @@ public class AdminResource {
     private Configuration config;
     private CandlepinCache candlepinCache;
 
-    @Inject
+    //@Inject
+    @Autowired
     public AdminResource(UserServiceAdapter userService, UserCurator userCurator,
         EventSink dispatcher, Configuration config, CandlepinCache candlepinCache) {
         this.userService = userService;

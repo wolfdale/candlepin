@@ -11,7 +11,8 @@
  * Red Hat trademarks are not licensed under GPLv2. No permission is
  * granted to use or replicate Red Hat trademarks that are incorporated
  * in this software or its documentation.
- */
+ *//*
+
 package org.candlepin.policy.js;
 
 import org.candlepin.model.Rules;
@@ -33,11 +34,13 @@ import java.util.Date;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+*/
 /**
  * Reads/compiles our javascript rules and the standard js objects only
  * once across the JVM lifetime (and whenever the rules require a recompile), and creates
  * lightweight execution scopes per thread/request.
- */
+ *//*
+
 public class JsRunnerProvider implements Provider<JsRunner> {
     private static Logger log = LoggerFactory.getLogger(JsRunnerProvider.class);
 
@@ -45,13 +48,15 @@ public class JsRunnerProvider implements Provider<JsRunner> {
     private Provider<JsRunnerRequestCache> cacheProvider;
     private Script script;
     private Scriptable scope;
-    /**
+    */
+/**
      * This date is basically a version of the rules that this
      * JSRunnerProvider compiled. Note that in clustered environment,
      * multiple nodes must compile same version of rules. Thats why
      * this JsRunnerProvider uses database to make sure it compiles and
      * uses the database dictated version.
-     */
+     *//*
+
     private volatile Date currentRulesUpdated;
 
     // Store the version and source of the compiled rules:
@@ -61,12 +66,14 @@ public class JsRunnerProvider implements Provider<JsRunner> {
     // Use this lock to access script, scope and updated
     private ReadWriteLock scriptLock = new ReentrantReadWriteLock();
 
-    /**
+    */
+/**
      * DynamicScopeContextFactory - replace the standard rhino context factory with one that
      * enables dynamic scopes. Dynamic scopes allow us to define a global var (ie pools) in
      * a thread/request local scope, and have the global scope (where our js code lives) be
      * able to read it.
-     */
+     *//*
+
     static class DynamicScopeContextFactory extends ContextFactory {
         @Override
         protected boolean hasFeature(Context cx, int featureIndex) {
@@ -91,12 +98,14 @@ public class JsRunnerProvider implements Provider<JsRunner> {
         this.compileRules();
     }
 
-    /**
+    */
+/**
      * These are the expensive operations (initStandardObjects and compileReader/exec).
      *  We do them once here, and define this provider as a singleton, so it's only
      *  done at provider creation or whenever rules are refreshed.
      *
-     */
+     *//*
+
     public void compileRules() {
         compileRules(false);
     }
@@ -136,21 +145,25 @@ public class JsRunnerProvider implements Provider<JsRunner> {
     }
 
     public JsRunner get() {
-        /**
+        */
+/**
          * Even though JsRunnerProvider is singleton, the
          * following cache is being retrieved fresh for
          * every new HTTP Request
-         */
+         *//*
+
         JsRunnerRequestCache cache = cacheProvider.get();
         Date updated = cache.getUpdated();
         if (updated == null) {
             updated = rulesCurator.getUpdated();
             cache.setUpdated(updated);
         }
-        /*
+        */
+/*
          * Create a new thread/request local javascript scope for the JsRules,
          * based on the preinitialized global one (which contains our js rules).
-         */
+         *//*
+
         // Avoid a write lock if we can
         if (!updated.equals(this.currentRulesUpdated)) {
             compileRules();
@@ -186,3 +199,4 @@ public class JsRunnerProvider implements Provider<JsRunner> {
     }
 
 }
+*/

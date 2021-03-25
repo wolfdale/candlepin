@@ -49,11 +49,12 @@ import org.candlepin.policy.js.pool.PoolHelper;
 import org.candlepin.util.DateSource;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.google.inject.Inject;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.xnap.commons.i18n.I18n;
 
 import java.io.Serializable;
@@ -74,6 +75,8 @@ import java.util.stream.Stream;
 /**
  * Enforces entitlement rules for normal (non-manifest) consumers.
  */
+@Component
+//@Transactional
 public class EntitlementRules implements Enforcer {
     private static final Logger log = LoggerFactory.getLogger(EntitlementRules.class);
 
@@ -95,7 +98,8 @@ public class EntitlementRules implements Enforcer {
 
     private static final String POST_PREFIX = "post_";
 
-    @Inject
+    //@Inject
+    @Autowired
     public EntitlementRules(DateSource dateSource,
         JsRunner jsRules, I18n i18n, Configuration config, ConsumerCurator consumerCurator,
         ConsumerTypeCurator consumerTypeCurator, ProductCurator productCurator, RulesObjectMapper mapper,

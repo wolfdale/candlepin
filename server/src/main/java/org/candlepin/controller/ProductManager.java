@@ -28,11 +28,11 @@ import org.candlepin.service.model.ProductContentInfo;
 import org.candlepin.service.model.ProductInfo;
 import org.candlepin.util.Util;
 
-import com.google.inject.Inject;
-import com.google.inject.persist.Transactional;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -55,6 +55,7 @@ import java.util.stream.Collectors;
  * The methods provided by this class are the prefered methods to use for CRUD operations on
  * products, to ensure product versioning and linking is handled properly.
  */
+@Component
 public class ProductManager {
     private static final Logger log = LoggerFactory.getLogger(ProductManager.class);
 
@@ -65,10 +66,10 @@ public class ProductManager {
     private final OwnerProductCurator ownerProductCurator;
     private final ProductCurator productCurator;
 
-    @Inject
-    public ProductManager(ContentAccessManager contentAccessManager,
-        EntitlementCertificateGenerator entitlementCertGenerator, OwnerContentCurator ownerContentCurator,
-        OwnerProductCurator ownerProductCurator, ProductCurator productCurator) {
+    @Autowired
+    public ProductManager(EntitlementCertificateGenerator entitlementCertGenerator,
+        OwnerContentCurator ownerContentCurator, OwnerProductCurator ownerProductCurator,
+        ProductCurator productCurator) {
 
         this.contentAccessManager = Objects.requireNonNull(contentAccessManager);
 

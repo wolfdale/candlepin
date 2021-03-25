@@ -128,8 +128,6 @@ import org.candlepin.util.FactValidator;
 import org.candlepin.util.PropertyValidationException;
 import org.candlepin.util.Util;
 
-import com.google.inject.Inject;
-import com.google.inject.persist.Transactional;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -146,6 +144,9 @@ import org.jboss.resteasy.spi.HttpRequest;
 import org.quartz.JobDetail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.xnap.commons.i18n.I18n;
 
 import java.io.File;
@@ -187,6 +188,8 @@ import javax.ws.rs.core.Response;
 /**
  * API Gateway for Consumers
  */
+@Component
+@Transactional
 @Path("/consumers")
 @Api(value = "consumers", authorizations = { @Authorization("basic") })
 public class ConsumerResource {
@@ -231,8 +234,9 @@ public class ConsumerResource {
     private ModelTranslator translator;
     private JobManager jobManager;
 
-    @Inject
-    @SuppressWarnings({ "checkstyle:parameternumber" })
+    //@Inject
+    @Autowired
+    @SuppressWarnings({"checkstyle:parameternumber"})
     public ConsumerResource(ConsumerCurator consumerCurator,
         ConsumerTypeCurator consumerTypeCurator,
         OwnerProductCurator ownerProductCurator,

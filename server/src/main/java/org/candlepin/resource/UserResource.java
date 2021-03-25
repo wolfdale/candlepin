@@ -31,8 +31,6 @@ import org.candlepin.service.model.OwnerInfo;
 import org.candlepin.service.model.RoleInfo;
 import org.candlepin.service.model.UserInfo;
 
-import com.google.inject.Inject;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -42,6 +40,9 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import io.swagger.annotations.Authorization;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.xnap.commons.i18n.I18n;
 
 import java.util.Collection;
@@ -65,6 +66,8 @@ import javax.ws.rs.core.MediaType;
 /**
  * UserResource
  */
+@Component
+@Transactional
 @Path("/users")
 @Api(value = "users", authorizations = { @Authorization("basic") })
 public class UserResource {
@@ -75,7 +78,8 @@ public class UserResource {
     private ModelTranslator modelTranslator;
 
 
-    @Inject
+    //@Inject
+    @Autowired
     public UserResource(UserServiceAdapter userService, I18n i18n, OwnerCurator ownerCurator,
         ModelTranslator modelTranslator) {
 

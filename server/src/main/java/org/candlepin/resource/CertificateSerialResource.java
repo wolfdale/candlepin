@@ -20,11 +20,13 @@ import org.candlepin.model.CandlepinQuery;
 import org.candlepin.model.CertificateSerial;
 import org.candlepin.model.CertificateSerialCurator;
 
-import com.google.inject.Inject;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -37,13 +39,16 @@ import javax.ws.rs.core.MediaType;
 /**
  * CertificateSerialResource
  */
+@Component
+@Transactional
 @Path("/serials")
 @Api(value = "serials", authorizations = { @Authorization("basic") })
 public class CertificateSerialResource {
     private CertificateSerialCurator certificateSerialCurator;
     private ModelTranslator translator;
 
-    @Inject
+    //@Inject
+    @Autowired
     public CertificateSerialResource(CertificateSerialCurator certificateSerialCurator,
         ModelTranslator translator) {
 

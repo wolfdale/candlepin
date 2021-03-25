@@ -46,13 +46,13 @@ import org.candlepin.util.OIDUtil;
 import org.candlepin.util.Util;
 import org.candlepin.util.X509V3ExtensionUtil;
 
-import com.google.inject.Inject;
-import com.google.inject.persist.Transactional;
-
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -80,6 +80,7 @@ import javax.naming.ldap.Rdn;
  * The ContentAccessManager provides management operations for organization and consumer level
  * content access modes.
  */
+@Component
 public class ContentAccessManager {
     private static Logger log = LoggerFactory.getLogger(ContentAccessManager.class);
 
@@ -199,7 +200,7 @@ public class ContentAccessManager {
 
     private boolean standalone;
 
-    @Inject
+    @Autowired
     public ContentAccessManager(
         Configuration config,
         PKIUtility pki,

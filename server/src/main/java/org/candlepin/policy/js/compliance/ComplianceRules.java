@@ -37,10 +37,11 @@ import org.candlepin.policy.js.RuleExecutionException;
 import org.candlepin.policy.js.RulesObjectMapper;
 import org.candlepin.policy.js.compliance.hash.ComplianceStatusHasher;
 
-import com.google.inject.Inject;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -61,6 +62,8 @@ import java.util.stream.Stream;
  *
  * A class used to check consumer compliance status.
  */
+@Component
+@Scope("prototype")
 public class ComplianceRules {
     private static Logger log = LoggerFactory.getLogger(ComplianceRules.class);
 
@@ -73,7 +76,7 @@ public class ComplianceRules {
     private RulesObjectMapper mapper;
     private ModelTranslator translator;
 
-    @Inject
+    @Autowired
     public ComplianceRules(JsRunner jsRules, EntitlementCurator entCurator,
         StatusReasonMessageGenerator generator, EventSink eventSink, ConsumerCurator consumerCurator,
         ConsumerTypeCurator consumerTypeCurator, RulesObjectMapper mapper, ModelTranslator translator) {

@@ -14,10 +14,6 @@
  */
 package org.candlepin.model;
 
-import org.candlepin.controller.OwnerContentAccess;
-
-import com.google.inject.Inject;
-import com.google.inject.persist.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Criteria;
@@ -33,23 +29,26 @@ import org.hibernate.criterion.Subqueries;
 import org.hibernate.sql.JoinType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-import javax.inject.Singleton;
-import javax.persistence.NoResultException;
-import javax.persistence.TypedQuery;
 
 
 /**
  * OwnerCurator
  */
-@Singleton
+//@Singleton
+@Component
+@Transactional
 public class OwnerCurator extends AbstractHibernateCurator<Owner> {
 
-    @Inject
+    //@Inject
+    @Autowired
     private CandlepinQueryFactory cpQueryFactory;
     private static final Logger log = LoggerFactory.getLogger(OwnerCurator.class);
 

@@ -27,14 +27,15 @@ import org.candlepin.model.OwnerCurator;
 import org.candlepin.model.ProductCurator;
 import org.candlepin.service.UniqueIdGenerator;
 
-import com.google.inject.Inject;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import io.swagger.annotations.Authorization;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.xnap.commons.i18n.I18n;
 
 import java.util.List;
@@ -52,6 +53,8 @@ import javax.ws.rs.core.MediaType;
 /**
  * ContentResource
  */
+@Component
+@Transactional
 @Path("/content")
 @Api(value = "content", authorizations = { @Authorization("basic") })
 public class ContentResource {
@@ -65,7 +68,8 @@ public class ContentResource {
     private OwnerCurator ownerCurator;
     private ModelTranslator modelTranslator;
 
-    @Inject
+    //@Inject
+    @Autowired
     public ContentResource(ContentCurator contentCurator, I18n i18n, UniqueIdGenerator idGenerator,
         EnvironmentContentCurator envContentCurator, PoolManager poolManager,
         ProductCurator productCurator, OwnerCurator ownerCurator, ModelTranslator modelTranslator) {

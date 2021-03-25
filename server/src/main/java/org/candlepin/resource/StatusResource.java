@@ -31,7 +31,6 @@ import org.candlepin.model.Rules.RulesSourceEnum;
 import org.candlepin.model.RulesCurator;
 import org.candlepin.policy.js.JsRunnerProvider;
 
-import com.google.inject.Inject;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -39,6 +38,9 @@ import io.swagger.annotations.ApiOperation;
 import org.keycloak.representations.adapters.config.AdapterConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.Date;
@@ -55,6 +57,8 @@ import javax.ws.rs.core.MediaType;
 /**
  * Status Resource
  */
+@Component
+@Transactional
 @Path("/status")
 @Api("status")
 public class StatusResource {
@@ -77,8 +81,9 @@ public class StatusResource {
     private CandlepinModeManager modeManager;
     private KeycloakConfiguration keycloakConfig;
 
-    @Inject
-    public StatusResource(RulesCurator rulesCurator, Configuration config, JsRunnerProvider jsProvider,
+    //@Inject
+    @Autowired
+    public StatusResource(RulesCurator rulesCurator, Configuration config, JsRunnerFactory jsProvider,
         CandlepinCache candlepinCache, CandlepinModeManager modeManager,
         KeycloakConfiguration keycloakConfig) {
 

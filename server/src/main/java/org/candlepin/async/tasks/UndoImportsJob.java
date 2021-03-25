@@ -34,17 +34,15 @@ import org.candlepin.model.Pool;
 import org.candlepin.model.UpstreamConsumer;
 import org.candlepin.service.SubscriptionServiceAdapter;
 
-import com.google.inject.persist.Transactional;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.xnap.commons.i18n.I18n;
 
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
 
 
 
@@ -53,6 +51,7 @@ import javax.inject.Inject;
  *
  * {@link Owner}.
  */
+@Component
 public class UndoImportsJob implements AsyncJob {
     private static final Logger log = LoggerFactory.getLogger(UndoImportsJob.class);
 
@@ -120,7 +119,7 @@ public class UndoImportsJob implements AsyncJob {
     protected ExporterMetadataCurator exportCurator;
     protected ImportRecordCurator importRecordCurator;
 
-    @Inject
+    @Autowired
     public UndoImportsJob(I18n i18n,
         OwnerCurator ownerCurator,
         PoolManager poolManager,

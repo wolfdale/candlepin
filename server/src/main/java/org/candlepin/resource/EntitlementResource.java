@@ -48,9 +48,6 @@ import org.candlepin.policy.js.entitlement.EntitlementRulesTranslator;
 import org.candlepin.resource.util.EntitlementFinderUtil;
 import org.candlepin.resteasy.parameter.KeyValueParameter;
 
-import com.google.inject.Inject;
-import com.google.inject.persist.Transactional;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -62,6 +59,9 @@ import org.apache.commons.lang.StringUtils;
 import org.jboss.resteasy.core.ResteasyContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.xnap.commons.i18n.I18n;
 
 import java.io.Serializable;
@@ -85,6 +85,8 @@ import javax.ws.rs.core.Response;
 /**
  * REST api gateway for the User object.
  */
+@Component
+@Transactional
 @Path("/entitlements")
 @Api(value = "entitlements", authorizations = { @Authorization("basic") })
 public class EntitlementResource {
@@ -101,7 +103,7 @@ public class EntitlementResource {
     private JobManager jobManager;
     private ModelTranslator translator;
 
-    @Inject
+    @Autowired
     public EntitlementResource(EntitlementCurator entitlementCurator,
         ConsumerCurator consumerCurator,
         ConsumerTypeCurator consumerTypeCurator,

@@ -15,16 +15,16 @@
 package org.candlepin.model;
 
 import org.hibernate.criterion.Restrictions;
-
-import javax.inject.Singleton;
-
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 
 /**
  *
  * UserCurator
  */
-@Singleton
+@Component
+@Transactional
 public class UserCurator extends AbstractHibernateCurator<User> {
 
     public UserCurator() {

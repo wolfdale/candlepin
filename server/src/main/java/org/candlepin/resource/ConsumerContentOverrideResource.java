@@ -21,11 +21,11 @@ import org.candlepin.model.ConsumerContentOverrideCurator;
 import org.candlepin.model.ConsumerCurator;
 import org.candlepin.util.ContentOverrideValidator;
 
-import com.google.inject.Inject;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.Authorization;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.xnap.commons.i18n.I18n;
 
 import javax.ws.rs.Path;
@@ -35,6 +35,7 @@ import javax.ws.rs.Path;
 /**
  * API Gateway for Consumers Content Overrides
  */
+@Component
 @Path("/consumers/{consumer_uuid}/content_overrides")
 @Api(value = "consumers", authorizations = { @Authorization("basic") })
 public class ConsumerContentOverrideResource extends
@@ -42,7 +43,7 @@ public class ConsumerContentOverrideResource extends
 
     private ConsumerCurator consumerCurator;
 
-    @Inject
+    @Autowired
     public ConsumerContentOverrideResource(I18n i18n, ConsumerContentOverrideCurator ccoCurator,
         ConsumerCurator consumerCurator, ContentOverrideValidator validator, ModelTranslator translator) {
 

@@ -18,15 +18,14 @@ import org.candlepin.audit.ActiveMQStatus;
 import org.candlepin.common.config.Configuration;
 import org.candlepin.config.ConfigProperties;
 
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-
 import org.apache.activemq.artemis.api.core.client.ActiveMQClient;
 import org.apache.activemq.artemis.api.core.client.ClientSessionFactory;
 import org.apache.activemq.artemis.api.core.client.ServerLocator;
 import org.apache.activemq.artemis.core.remoting.CloseListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -43,7 +42,7 @@ import java.util.concurrent.TimeUnit;
  */
 // FIXME Need to have this class hold its own connection for monitoring or we need
 //       to hook into the ActiveMQSessionFactory's connection some how.
-@Singleton
+@Component
 public class ActiveMQStatusMonitor implements Closeable, Runnable, CloseListener {
 
     private static Logger log = LoggerFactory.getLogger(ActiveMQStatusMonitor.class);
@@ -62,7 +61,7 @@ public class ActiveMQStatusMonitor implements Closeable, Runnable, CloseListener
     // it is tested.
     protected boolean connectionOk = false;
 
-    @Inject
+    @Autowired
     public ActiveMQStatusMonitor(Configuration config) throws Exception {
         this.config = config;
         this.monitorInterval = config.getLong(ConfigProperties.ACTIVEMQ_CONNECTION_MONITOR_INTERVAL);

@@ -32,7 +32,9 @@ import org.candlepin.service.model.OwnerInfo;
 import org.candlepin.service.model.ProductInfo;
 import org.candlepin.service.model.SubscriptionInfo;
 
-import com.google.inject.persist.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -59,14 +61,15 @@ import javax.ws.rs.core.MediaType;
  * The HostedTestResource class provides an endpoint for managing the upstream data stored by the
  * backing HostedTestDataStore class
  */
+@Component
 @SuppressSwaggerCheck
 @Path("/hostedtest")
 public class HostedTestResource {
 
-    @Inject
-    private HostedTestDataStore datastore;
+    @Autowired
+    private HostedTestSubscriptionServiceAdapter adapter;
 
-    @Inject
+    @Autowired
     private UniqueIdGenerator idGenerator;
 
     /**
