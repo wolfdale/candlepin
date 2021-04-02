@@ -54,8 +54,6 @@ import org.candlepin.sync.file.ManifestFileService;
 import org.candlepin.sync.file.ManifestFileServiceException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.inject.Inject;
-import com.google.inject.persist.Transactional;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
@@ -474,7 +472,7 @@ public class Importer {
     }
 
     @SuppressWarnings("checkstyle:methodlength")
-    @Transactional(rollbackOn = { IOException.class, ImporterException.class,
+    @Transactional(rollbackFor = { IOException.class, ImporterException.class,
         RuntimeException.class, ImportConflictException.class })
     // WARNING: Keep this method public, otherwise @Transactional is ignored:
     public List<SubscriptionDTO> importObjects(Owner owner, Map<String, File> importFiles,

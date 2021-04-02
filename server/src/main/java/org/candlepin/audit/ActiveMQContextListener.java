@@ -30,7 +30,6 @@ import java.io.IOException;
 import java.util.List;
 
 
-
 /**
  * ActiveMQContextListener - Invoked from our core CandlepinContextListener, thus
  * doesn't actually implement ServletContextListener.
@@ -49,9 +48,6 @@ public class ActiveMQContextListener {
 
     @Autowired
     private ArtemisMessageSource messageSource;
-
-    @Autowired
-    private QpidStatusMonitor qpidStatusMonitor;
 
     @Autowired
     private SuspendModeTransitioner suspendModeTransitioner;
@@ -86,23 +82,9 @@ public class ActiveMQContextListener {
         // ArtemisMessageSource must listen for ActiveMQ status changes so that connections can be rebuilt.
         activeMQStatusMonitor.registerListener(messageSource);
 
-        //setupAmqp(injector, candlepinConfig, messageSource);
-        setupAmqp(candlepinConfig, messageSource);
-
         // Initialize the ActiveMQ status monitor so that client sessions can be established
         // if the broker is active.
         activeMQStatusMonitor.initialize();
-    }
-
-    //private void setupAmqp(Injector injector, Configuration candlepinConfig,
-    private void setupAmqp(Configuration candlepinConfig,
-        ArtemisMessageSource messageSource) {
-        if (candlepinConfig.getBoolean(ConfigProperties.AMQP_INTEGRATION_ENABLED)) {
-            // Listen for Qpid connection changes so that the appropriate ClientSessions
-            // can be shutdown/restarted when Qpid status changes.
-            //QpidStatusMonitor qpidStatusMonitor = injector.getInstance(QpidStatusMonitor.class);
-            qpidStatusMonitor.addStatusChangeListener(messageSource);
-        }
     }
 
     /**

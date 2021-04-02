@@ -39,8 +39,6 @@ import org.candlepin.messaging.impl.artemis.ArtemisUtil;
 import org.candlepin.messaging.impl.noop.NoopContextListener;
 import org.candlepin.messaging.impl.noop.NoopSessionFactory;
 import org.candlepin.model.RulesCurator;
-import org.candlepin.policy.js.JsRunnerFactory;
-import org.candlepin.policy.js.JsRunnerRequestCacheFactory;
 import org.candlepin.resteasy.filter.CandlepinSuspendModeFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;

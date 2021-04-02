@@ -20,7 +20,6 @@ import org.candlepin.common.jackson.HateoasBeanPropertyFilter;
 import org.candlepin.common.jackson.MultiFilter;
 import org.candlepin.config.ConfigProperties;
 import org.candlepin.jackson.DateSerializer;
-import org.candlepin.jackson.ProductCachedSerializationModule;
 
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.AnnotationIntrospector;
@@ -58,7 +57,7 @@ public class CustomResteasyJackson2Provider extends ResteasyJackson2Provider {
 
     @Autowired
     public CustomResteasyJackson2Provider(@Qualifier("springObjectMapper") ObjectMapper mapper,
-                                          Configuration config, ProductCachedSerializationModule productCachedModules) {
+        Configuration config) {
 
         // TODO candlepin-spring: Below line of code has been copied from JsonProvider
         // we need to find a way to migrate this fragment to ResteasyJackson2Provider
@@ -79,7 +78,6 @@ public class CustomResteasyJackson2Provider extends ResteasyJackson2Provider {
         // Ensure our DateSerializer is used for all Date objects
         dateModule.addSerializer(Date.class, new DateSerializer());
         mapper.registerModule(dateModule);
-        mapper.registerModule(productCachedModules);
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         configureHateoasObjectMapper(mapper, indentJson);
         setMapper(mapper);

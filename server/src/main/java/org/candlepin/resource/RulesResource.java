@@ -20,7 +20,6 @@ import org.candlepin.common.exceptions.ServiceUnavailableException;
 import org.candlepin.model.CuratorException;
 import org.candlepin.model.Rules;
 import org.candlepin.model.RulesCurator;
-import org.candlepin.policy.js.JsRunnerFactory;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -58,7 +57,7 @@ public class RulesResource {
     private RulesCurator rulesCurator;
     private I18n i18n;
     private EventSink sink;
-    //private JsRunnerProvider jsProvider;
+    private JsRunnerProvider jsProvider;
     /* TODO chnage the instance name to jsFactory */
     private JsRunnerFactory jsProvider;
 

@@ -19,18 +19,13 @@ import static org.candlepin.config.ConfigProperties.ENCRYPTED_PROPERTIES;
 import static org.candlepin.config.ConfigProperties.PASSPHRASE_SECRET_FILE;
 
 import org.candlepin.async.JobManager;
-import org.candlepin.audit.AMQPBusPublisher;
 import org.candlepin.audit.ActiveMQContextListener;
-import org.candlepin.audit.QpidConnection;
-import org.candlepin.audit.QpidQmf;
-import org.candlepin.audit.QpidStatus;
 import org.candlepin.common.config.ConfigurationException;
 import org.candlepin.common.config.EncryptedConfiguration;
 import org.candlepin.common.config.MapConfiguration;
 import org.candlepin.common.logging.LoggingConfigurator;
 import org.candlepin.config.ConfigProperties;
 import org.candlepin.config.DatabaseConfigFactory;
-import org.candlepin.controller.QpidStatusMonitor;
 import org.candlepin.controller.SuspendModeTransitioner;
 import org.candlepin.guice.CandlepinCapabilities;
 import org.candlepin.logging.LoggerContextListener;
@@ -91,15 +86,6 @@ public class CandlepinContextListener implements ServletContextListener {
     private AnnotationLocator annotationLocator;
 
     @Autowired
-    private QpidQmf qmf;
-
-    @Autowired
-    private QpidStatusMonitor qpidMonitor;
-
-    @Autowired
-    private QpidConnection qpidConnection;
-
-    @Autowired
     private SuspendModeTransitioner suspendModeTransitioner;
 
     @Autowired
@@ -122,9 +108,6 @@ public class CandlepinContextListener implements ServletContextListener {
 
     @Autowired
     private CrlFileUtil crlFileUtil;
-
-    @Autowired
-    private AMQPBusPublisher amqpBusPublisher;
 
     @Autowired
     private LoggerContextListener loggerListener;
@@ -172,28 +155,6 @@ public class CandlepinContextListener implements ServletContextListener {
         // that relies upon it
         this.cpmContextListener.initialize();
 
-        if (config.getBoolean(ConfigProperties.AMQP_INTEGRATION_ENABLED)) {
-            if (!config.getBoolean(ConfigProperties.SUSPEND_MODE_ENABLED)) {
-                QpidStatus status = qmf.getStatus();
-                if (status != QpidStatus.CONNECTED) {
-                    log.error("Qpid is in status {}. Please fix Qpid configuration " +
-                        "and make sure Qpid is up and running. Candlepin will shutdown now.", status);
-                    throw new RuntimeException("Error during Startup: Qpid is in status " + status);
-                }
-            }
-
-            qpidMonitor.addStatusChangeListener(qpidConnection);
-
-            if (config.getBoolean(ConfigProperties.SUSPEND_MODE_ENABLED)) {
-                qpidMonitor.addStatusChangeListener(suspendModeTransitioner);
-            }
-
-            // Run the monitor immediately so that the listeners are notified of the current status.
-            // After which we can schedule the monitor to run on the configured interval.
-            qpidMonitor.run();
-            qpidMonitor.schedule();
-        }
-
         if (config.getBoolean(ACTIVEMQ_ENABLED)) {
             // If Artemis can not be started candlepin will not start.
             activeMQContextListener.contextInitialized();
@@ -215,10 +176,10 @@ public class CandlepinContextListener implements ServletContextListener {
         // Custom ModelConverter to handle our specific serialization requirements
         modelConverters.addConverter(candlepinSwaggerModelConverter);
 
-        if (config.getBoolean(ConfigProperties.KEYCLOAK_AUTHENTICATION)) {
+        /*if (config.getBoolean(ConfigProperties.KEYCLOAK_AUTHENTICATION)) {
             CandlepinCapabilities capabilities = CandlepinCapabilities.getCapabilities();
             capabilities.add(CandlepinCapabilities.KEYCLOAK_AUTH_CAPBILITY);
-        }
+        }*/
 
         // Init CRL file
         String filePath = getCrlFilePath();
@@ -249,12 +210,6 @@ public class CandlepinContextListener implements ServletContextListener {
     private void destroySubsystems() throws Exception {
         // Tear down the job system
         this.jobManager.shutdown();
-
-        // if amqp is enabled, close all connections.
-        if (config.getBoolean(ConfigProperties.AMQP_INTEGRATION_ENABLED)) {
-            //Util.closeSafely(injector.getInstance(AMQPBusPublisher.class), "AMQPBusPublisher");
-            Util.closeSafely(amqpBusPublisher, "AMQPBusPublisher");
-        }
 
         //injector.getInstance(PersistService.class).stop();
         //persistService.stop();

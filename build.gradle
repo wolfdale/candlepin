@@ -37,6 +37,7 @@ ext.versions = [
     spring_data_releasetrain : "Neumann-SR8",
     resteasy_spring_boot_starter_version : "4.7.0.Final",
     spring_guice_version : "1.1.4.RELEASE",
+    spring_transactions: "5.2.13.RELEASE",
 //    tomcat_version : '8.5.34'
 
 ]
@@ -121,6 +122,7 @@ ext.libraries = [
         "org.springframework.guice:spring-guice",
         "org.springframework.boot:spring-boot-starter-data-jpa",
         "org.springframework.boot:spring-boot-starter-validation",
+        "org.springframework:spring-tx"
     ],
     liquibase: "org.liquibase:liquibase-core",
     liquibase_slf4j: "com.mattbertolini:liquibase-slf4j",
@@ -206,6 +208,7 @@ allprojects {
             dependency group: 'com.google.inject', name: 'guice', version: "$versions.guice"
             dependency group: 'org.jboss.resteasy', name: 'resteasy-spring-boot-starter', version: "$versions.resteasy_spring_boot_starter_version"
             dependency group: 'org.springframework.guice', name: 'spring-guice', version: "$versions.spring_guice_version"
+            dependency group: 'org.springframework', name: 'spring-tx', version: "$versions.spring_transactions"
             // DB Drivers
             dependency group: 'org.postgresql', name: 'postgresql', version: '42.2.2'
             dependency group: 'mysql', name: 'mysql-connector-java', version: '8.0.20'
