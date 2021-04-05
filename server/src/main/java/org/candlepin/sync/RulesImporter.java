@@ -18,7 +18,7 @@ import org.candlepin.audit.EventSink;
 import org.candlepin.common.util.VersionUtil;
 import org.candlepin.model.Rules;
 import org.candlepin.model.RulesCurator;
-import org.candlepin.policy.js.JsRunnerProvider;
+import org.candlepin.policy.js.JsRunnerFactory;
 
 import com.google.inject.Inject;
 
@@ -36,10 +36,10 @@ public class RulesImporter {
 
     private RulesCurator curator;
     private EventSink sink;
-    private JsRunnerProvider jsProvider;
+    private JsRunnerFactory jsProvider;
 
     @Inject
-    RulesImporter(RulesCurator curator, EventSink sink, JsRunnerProvider jsProvider) {
+    RulesImporter(RulesCurator curator, EventSink sink, JsRunnerFactory jsProvider) {
         this.curator = curator;
         this.sink = sink;
         this.jsProvider = jsProvider;

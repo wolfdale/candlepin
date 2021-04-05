@@ -29,7 +29,7 @@ import org.candlepin.dto.api.v1.StatusDTO;
 import org.candlepin.guice.CandlepinCapabilities;
 import org.candlepin.model.Rules.RulesSourceEnum;
 import org.candlepin.model.RulesCurator;
-import org.candlepin.policy.js.JsRunnerProvider;
+import org.candlepin.policy.js.JsRunnerFactory;
 
 
 import io.swagger.annotations.Api;
@@ -76,7 +76,7 @@ public class StatusResource {
     private boolean standalone;
     private boolean keycloakEnabled;
     private RulesCurator rulesCurator;
-    private JsRunnerProvider jsProvider;
+    private JsRunnerFactory jsProvider;
     private CandlepinCache candlepinCache;
     private CandlepinModeManager modeManager;
     private KeycloakConfiguration keycloakConfig;

@@ -60,6 +60,7 @@ import org.candlepin.policy.SystemPurposeComplianceRules;
 import org.candlepin.policy.ValidationError;
 import org.candlepin.policy.ValidationResult;
 import org.candlepin.policy.activationkey.ActivationKeyRules;
+import org.candlepin.policy.js.JsRunnerFactory;
 import org.candlepin.policy.js.autobind.AutobindRules;
 import org.candlepin.policy.js.compliance.ComplianceRules;
 import org.candlepin.policy.js.compliance.ComplianceStatus;
@@ -68,7 +69,7 @@ import org.candlepin.policy.js.entitlement.Enforcer.CallerType;
 import org.candlepin.policy.js.pool.PoolRules;
 import org.candlepin.policy.js.pool.PoolUpdate;
 import org.candlepin.resource.dto.AutobindData;
-import org.candlepin.resteasy.JsonProvider;
+import org.candlepin.resteasy.CustomResteasyJackson2Provider;
 import org.candlepin.service.ProductServiceAdapter;
 import org.candlepin.service.SubscriptionServiceAdapter;
 import org.candlepin.service.model.CdnInfo;
@@ -90,6 +91,8 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.codec.json.Jackson2SmileDecoder;
 import org.xnap.commons.i18n.I18n;
 
 import java.util.ArrayList;
@@ -147,8 +150,11 @@ public class CandlepinPoolManager implements PoolManager {
     private final CdnCurator cdnCurator;
     private final OwnerManager ownerManager;
     private final BindChainFactory bindChainFactory;
-    private final JsonProvider jsonProvider;
+    private final JsRunnerFactory jsonProvider;
     private Provider<RefreshWorker> refreshWorkerProvider;
+
+    @Autowired
+    protected CustomResteasyJackson2Provider jackson2Provider;
 
     /**
      * @param poolCurator
@@ -182,7 +188,7 @@ public class CandlepinPoolManager implements PoolManager {
         CdnCurator cdnCurator,
         I18n i18n,
         BindChainFactory bindChainFactory,
-        JsonProvider jsonProvider,
+        JsRunnerFactory jsonProvider,
         Provider<RefreshWorker> refreshWorkerProvider) {
 
         this.poolCurator = Objects.requireNonNull(poolCurator);
@@ -238,7 +244,7 @@ public class CandlepinPoolManager implements PoolManager {
         // we can simulate this in a testing environment.
         if (log.isTraceEnabled()) {
             try {
-                ObjectMapper mapper = this.jsonProvider
+                ObjectMapper mapper = this.jackson2Provider
                     .locateMapper(Object.class, MediaType.APPLICATION_JSON_TYPE);
 
                 log.trace("Received {} subscriptions from upstream:", subscriptionMap.size());
@@ -261,7 +267,7 @@ public class CandlepinPoolManager implements PoolManager {
             // Dump JSON representing dev products for simulation
             if (log.isTraceEnabled()) {
                 try {
-                    ObjectMapper mapper = this.jsonProvider
+                    ObjectMapper mapper = this.jackson2Provider
                         .locateMapper(Object.class, MediaType.APPLICATION_JSON_TYPE);
 
                     log.trace("Received {} dev products from upstream:", devProducts.size());

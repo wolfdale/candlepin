@@ -18,6 +18,7 @@ import org.candlepin.service.SubscriptionServiceAdapter;
 import org.candlepin.service.model.ConsumerInfo;
 import org.candlepin.service.model.ProductInfo;
 import org.candlepin.service.model.SubscriptionInfo;
+import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -34,6 +35,7 @@ import javax.inject.Singleton;
  * the HostedTestDataStore upstream simulator.
  */
 @Singleton
+@Component
 public class HostedTestSubscriptionServiceAdapter implements SubscriptionServiceAdapter {
 
     private final HostedTestDataStore datastore;

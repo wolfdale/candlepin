@@ -43,8 +43,7 @@ import org.xnap.commons.i18n.I18n;
 
 import java.util.Date;
 import java.util.List;
-
-
+import java.util.stream.Collectors;
 
 /**
  * Asynchronous job for removing pools created during manifest import.

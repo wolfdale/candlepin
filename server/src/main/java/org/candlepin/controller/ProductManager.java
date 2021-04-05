@@ -59,7 +59,7 @@ import java.util.stream.Collectors;
 public class ProductManager {
     private static final Logger log = LoggerFactory.getLogger(ProductManager.class);
 
-    private final ContentAccessManager contentAccessManager;
+    private ContentAccessManager contentAccessManager = null;
 
     private final EntitlementCertificateGenerator entitlementCertGenerator;
     private final OwnerContentCurator ownerContentCurator;

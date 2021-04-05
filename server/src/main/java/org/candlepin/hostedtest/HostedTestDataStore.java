@@ -38,6 +38,7 @@ import org.candlepin.service.model.SubscriptionInfo;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.Date;
@@ -60,6 +61,7 @@ import javax.inject.Singleton;
  * class is to support spec tests.
  */
 @Singleton
+@Component
 public class HostedTestDataStore {
     private static Logger log = LoggerFactory.getLogger(HostedTestDataStore.class);
 

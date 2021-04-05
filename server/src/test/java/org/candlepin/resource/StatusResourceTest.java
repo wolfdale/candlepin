@@ -36,7 +36,7 @@ import org.candlepin.dto.api.v1.StatusDTO;
 import org.candlepin.model.CandlepinQuery;
 import org.candlepin.model.Rules;
 import org.candlepin.model.RulesCurator;
-import org.candlepin.policy.js.JsRunnerProvider;
+import org.candlepin.policy.js.JsRunnerFactory;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
@@ -71,7 +71,7 @@ public class StatusResourceTest {
 
     @Mock private RulesCurator rulesCurator;
     @Mock private Configuration config;
-    @Mock private JsRunnerProvider jsProvider;
+    @Mock private JsRunnerFactory jsProvider;
     @Mock private CandlepinCache candlepinCache;
     @Mock private StatusCache mockedStatusCache;
     @Mock private CandlepinModeManager modeManager;

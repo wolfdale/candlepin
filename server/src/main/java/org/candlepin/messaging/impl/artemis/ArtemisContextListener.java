@@ -18,6 +18,7 @@ import static org.candlepin.config.ConfigProperties.ASYNC_JOBS_THREAD_SHUTDOWN_T
 
 
 import org.candlepin.common.config.Configuration;
+import org.candlepin.common.exceptions.CandlepinException;
 import org.candlepin.config.ConfigProperties;
 import org.candlepin.messaging.CPMContextListener;
 import org.candlepin.messaging.CPMException;
@@ -29,9 +30,12 @@ import org.apache.activemq.artemis.spi.core.security.ActiveMQJAASSecurityManager
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.client.HttpServerErrorException;
 
 import java.io.File;
 import java.util.concurrent.TimeUnit;
+
+import javax.ws.rs.core.Response;
 
 /**
  * CPMContextListener implementation backed by Artemis
@@ -127,7 +131,7 @@ public class ArtemisContextListener implements CPMContextListener {
             }
         }
         catch (InterruptedException e) {
-            throw new ActiveMQInterruptedException(e);
+            throw new CandlepinException(Response.Status.INTERNAL_SERVER_ERROR, "Unable to shutdown Artemis");
         }
 
         ActiveMQClient.getGlobalScheduledThreadPool().shutdown();
@@ -139,7 +143,7 @@ public class ArtemisContextListener implements CPMContextListener {
             }
         }
         catch (InterruptedException e) {
-            throw new ActiveMQInterruptedException(e);
+            throw new CandlepinException(Response.Status.INTERNAL_SERVER_ERROR, "Unable to shutdown Artemis");
         }
     }
 

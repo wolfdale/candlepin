@@ -16,6 +16,7 @@ package org.candlepin.model;
 
 
 import org.apache.commons.lang3.StringUtils;
+import org.candlepin.controller.OwnerContentAccess;
 import org.hibernate.Criteria;
 import org.hibernate.LockMode;
 import org.hibernate.LockOptions;
@@ -37,17 +38,16 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-
+import javax.persistence.NoResultException;
+import javax.persistence.TypedQuery;
 
 /**
  * OwnerCurator
  */
-//@Singleton
 @Component
 @Transactional
 public class OwnerCurator extends AbstractHibernateCurator<Owner> {
 
-    //@Inject
     @Autowired
     private CandlepinQueryFactory cpQueryFactory;
     private static final Logger log = LoggerFactory.getLogger(OwnerCurator.class);

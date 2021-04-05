@@ -67,6 +67,9 @@ import javax.ws.rs.core.MediaType;
 public class HostedTestResource {
 
     @Autowired
+    private HostedTestDataStore datastore;
+
+    @Autowired
     private HostedTestSubscriptionServiceAdapter adapter;
 
     @Autowired

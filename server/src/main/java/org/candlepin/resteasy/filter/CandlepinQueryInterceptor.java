@@ -156,7 +156,7 @@ public class CandlepinQueryInterceptor implements ContainerResponseFilter {
     }
 
     private StreamingOutput buildOutputStreamer(Session session, CandlepinQuery query) {
-        ObjectMapper mapper = this.jsonProvider
+        ObjectMapper mapper = this.jackson2Provider
             .locateMapper(Object.class, MediaType.APPLICATION_JSON_TYPE);
 
         return stream -> {
