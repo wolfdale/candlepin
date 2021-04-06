@@ -39,11 +39,11 @@ import javax.servlet.http.HttpServletRequest;
 public class I18nProvider extends CommonI18nProvider implements Provider<I18n> {
     private static Logger log = LoggerFactory.getLogger(I18nProvider.class);
     private static Map<Locale, I18n> cache = new ConcurrentHashMap<>();
-    private final Provider<HttpServletRequest> request;
+//    private final Provider<HttpServletRequest> request;
 
     @Inject
-    public I18nProvider(Provider<HttpServletRequest> request) {
-        this.request = request;
+    public I18nProvider() {
+//        this.request = request;
     }
 
     @Override
@@ -51,7 +51,7 @@ public class I18nProvider extends CommonI18nProvider implements Provider<I18n> {
         Locale locale = null;
 
         try {
-            locale = request.get().getLocale();
+//            locale = request.get().getLocale();
         }
         catch (ProvisionException e) {
             // This can happen in pinsetter, or anything else not in an http
