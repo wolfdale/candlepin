@@ -93,6 +93,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.codec.json.Jackson2SmileDecoder;
+import org.springframework.stereotype.Component;
 import org.xnap.commons.i18n.I18n;
 
 import java.util.ArrayList;
@@ -120,11 +121,21 @@ import javax.ws.rs.core.MediaType;
 /**
  * PoolManager
  */
+@Component
 public class CandlepinPoolManager implements PoolManager {
 
     private static final Logger log = LoggerFactory.getLogger(CandlepinPoolManager.class);
     private static final int MAX_ENTITLE_RETRIES = 3;
     private static final Pattern ATTRIBUTE_VALUE_DELIMITER = Pattern.compile("\\s*,\\s*");
+
+    @Autowired
+    private final OwnerManager ownerManager;
+
+    @Autowired
+    private PoolRules poolRules;
+
+    @Autowired
+    protected CustomResteasyJackson2Provider jackson2Provider;
 
     private final I18n i18n;
     private final PoolCurator poolCurator;
@@ -132,7 +143,6 @@ public class CandlepinPoolManager implements PoolManager {
     private final EventFactory eventFactory;
     private final Configuration config;
     private final Enforcer enforcer;
-    private final PoolRules poolRules;
     private final EntitlementCurator entitlementCurator;
     private final ConsumerCurator consumerCurator;
     private final ConsumerTypeCurator consumerTypeCurator;
@@ -148,13 +158,10 @@ public class CandlepinPoolManager implements PoolManager {
     private final OwnerCurator ownerCurator;
     private final OwnerProductCurator ownerProductCurator;
     private final CdnCurator cdnCurator;
-    private final OwnerManager ownerManager;
     private final BindChainFactory bindChainFactory;
     private final JsRunnerFactory jsonProvider;
     private Provider<RefreshWorker> refreshWorkerProvider;
 
-    @Autowired
-    protected CustomResteasyJackson2Provider jackson2Provider;
 
     /**
      * @param poolCurator
@@ -169,7 +176,6 @@ public class CandlepinPoolManager implements PoolManager {
         EventFactory eventFactory,
         Configuration config,
         Enforcer enforcer,
-        PoolRules poolRules,
         EntitlementCurator entitlementCurator,
         ConsumerCurator consumerCurator,
         ConsumerTypeCurator consumerTypeCurator,
@@ -199,7 +205,7 @@ public class CandlepinPoolManager implements PoolManager {
         this.consumerCurator = Objects.requireNonNull(consumerCurator);
         this.consumerTypeCurator = Objects.requireNonNull(consumerTypeCurator);
         this.enforcer = Objects.requireNonNull(enforcer);
-        this.poolRules = Objects.requireNonNull(poolRules);
+//        this.poolRules = Objects.requireNonNull(poolRules);
         this.entitlementCertificateCurator = Objects.requireNonNull(entitlementCertCurator);
         this.ecGenerator = Objects.requireNonNull(ecGenerator);
         this.complianceRules = Objects.requireNonNull(complianceRules);

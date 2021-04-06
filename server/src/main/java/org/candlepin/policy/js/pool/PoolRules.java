@@ -58,17 +58,18 @@ public class PoolRules {
     private static final Logger log = LoggerFactory.getLogger(PoolRules.class);
 
     @Autowired
-    private final PoolManager poolManager;
+    private PoolManager poolManager;
+
     private final Configuration config;
     private final EntitlementCurator entCurator;
     private final OwnerProductCurator ownerProductCurator;
     private final ProductCurator productCurator;
 
     @Autowired
-    public PoolRules(PoolManager poolManager, Configuration config, EntitlementCurator entCurator,
+    public PoolRules(Configuration config, EntitlementCurator entCurator,
         OwnerProductCurator ownerProductCurator, ProductCurator productCurator) {
 
-        this.poolManager = Objects.requireNonNull(poolManager);
+//        this.poolManager = Objects.requireNonNull(poolManager);
         this.config = Objects.requireNonNull(config);
         this.entCurator = Objects.requireNonNull(entCurator);
         this.ownerProductCurator = Objects.requireNonNull(ownerProductCurator);
