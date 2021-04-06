@@ -50,8 +50,6 @@ import java.util.List;
  *
  * An single instance of this object will be created per request/job.
  */
-//@CandlepinRequestScoped
-//@RequestScope
 public class EventSinkImpl implements EventSink {
     private static Logger log = LoggerFactory.getLogger(EventSinkImpl.class);
 

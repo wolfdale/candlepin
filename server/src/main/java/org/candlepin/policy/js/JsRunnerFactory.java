@@ -12,7 +12,6 @@
  * granted to use or replicate Red Hat trademarks that are incorporated
  * in this software or its documentation.
  */
-
 package org.candlepin.policy.js;
 
 import org.candlepin.model.Rules;
@@ -84,14 +83,7 @@ public class JsRunnerFactory implements FactoryBean<JsRunner> {
 		log.debug("Compiling rules for initial load");
 		this.rulesCurator.updateDbRules();
 		this.compileRules();
-		//initializeRules();
 	}
-
-	//    @Transactional
-	//    public void initializeRules() {
-	//        this.rulesCurator.updateDbRules();
-	//        this.compileRules();
-	//    }
 
 	/**
 	 * These are the expensive operations (initStandardObjects and compileReader/exec).

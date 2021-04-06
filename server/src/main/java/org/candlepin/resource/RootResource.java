@@ -82,7 +82,6 @@ public class RootResource implements RootApi {
         addResource(ConsumerContentOverrideResource.class);
     }
 
-    //@Inject
     @Autowired
     public RootResource(Configuration config) {
         this.config = config;

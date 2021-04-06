@@ -30,7 +30,6 @@ import org.apache.activemq.artemis.spi.core.security.ActiveMQJAASSecurityManager
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.client.HttpServerErrorException;
 
 import java.io.File;
 import java.util.concurrent.TimeUnit;
@@ -40,7 +39,6 @@ import javax.ws.rs.core.Response;
 /**
  * CPMContextListener implementation backed by Artemis
  */
-//@Component
 public class ArtemisContextListener implements CPMContextListener {
     private static  Logger log = LoggerFactory.getLogger(ArtemisContextListener.class);
     @Autowired
@@ -59,10 +57,7 @@ public class ArtemisContextListener implements CPMContextListener {
      * {@inheritDoc}
      */
     @Override
-    //public void initialize(Injector injector) throws CPMException {
     public void initialize() throws CPMException {
-        //this.config = injector.getInstance(Configuration.class);
-
         // Create the server if we're configured to do so.
         // TODO: Change this to use ACTIVEMQ_EMBEDDED_BROKER once configuration upgrades are in
         // place
@@ -107,8 +102,6 @@ public class ArtemisContextListener implements CPMContextListener {
             }
         }
 
-        // Initialize our session factory
-        //ArtemisSessionFactory factory = injector.getInstance(ArtemisSessionFactory.class);
         factory.initialize();
     }
 
@@ -155,7 +148,6 @@ public class ArtemisContextListener implements CPMContextListener {
     @Override
     public void destroy() throws CPMException {
         // Tear down the internal artemis server if it exists
-
         try {
             if (this.activeMQServer != null) {
                 this.activeMQServer.stop();

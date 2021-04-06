@@ -88,7 +88,6 @@ public class GuestIdResource {
     private Provider<GuestMigration> migrationProvider;
     private ModelTranslator translator;
 
-    //@Inject
     @Autowired
     public GuestIdResource(GuestIdCurator guestIdCurator, ConsumerCurator consumerCurator,
         ConsumerTypeCurator consumerTypeCurator, ConsumerResource consumerResource, I18n i18n,

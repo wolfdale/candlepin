@@ -38,8 +38,6 @@ import java.util.List;
 public class ActiveMQContextListener {
     private static  Logger log = LoggerFactory.getLogger(ActiveMQContextListener.class);
 
-    //private ArtemisMessageSource messageSource;
-
     @Autowired
     private ActiveMQStatusMonitor activeMQStatusMonitor;
 
@@ -52,13 +50,12 @@ public class ActiveMQContextListener {
     @Autowired
     private SuspendModeTransitioner suspendModeTransitioner;
 
-    //public void contextDestroyed(Injector injector) {
     public void contextDestroyed() {
         if (this.messageSource != null) {
             this.messageSource.shutDown();
         }
+
         try {
-            //injector.getInstance(ActiveMQStatusMonitor.class).close();
             activeMQStatusMonitor.close();
         }
         catch (IOException e) {
@@ -66,24 +63,12 @@ public class ActiveMQContextListener {
         }
     }
 
-    //public void contextInitialized(Injector injector) {
     public void contextInitialized() {
-        //Configuration candlepinConfig = injector.getInstance(Configuration.class);
-
-        //ActiveMQStatusMonitor activeMQStatusMonitor = injector.getInstance(ActiveMQStatusMonitor.class);
-        // If suspend mode is enabled, we need the transitioner to listen for connection drops.
         if (candlepinConfig.getBoolean(ConfigProperties.SUSPEND_MODE_ENABLED)) {
-            //activeMQStatusMonitor.registerListener(injector.getInstance(SuspendModeTransitioner.class));
             activeMQStatusMonitor.registerListener(suspendModeTransitioner);
         }
 
-        // Set up the ArtemisMessageSource.
-        //messageSource = injector.getInstance(ArtemisMessageSource.class);
-        // ArtemisMessageSource must listen for ActiveMQ status changes so that connections can be rebuilt.
         activeMQStatusMonitor.registerListener(messageSource);
-
-        // Initialize the ActiveMQ status monitor so that client sessions can be established
-        // if the broker is active.
         activeMQStatusMonitor.initialize();
     }
 
@@ -97,5 +82,4 @@ public class ActiveMQContextListener {
 
         return listeners;
     }
-
 }

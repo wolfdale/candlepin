@@ -73,16 +73,10 @@ public class CandlepinQueryInterceptor implements ContainerResponseFilter {
      * @return a newly opened session
      */
     protected Session openSession() {
-//        Session currentSession = (Session) this.emProvider.get().getDelegate();
-//        SessionFactory factory = currentSession.getSessionFactory();
-//        return factory.openSession();
         Session session;
         System.out.println("Candlepin Query Interceptor: opening a fresh session");
         session = entityManagerFactory.unwrap(SessionFactory.class).openSession();
         return session;
-//        Session currentSession = entityManager.unwrap(Session.class);
-//        SessionFactory sessionFactory = currentSession.getSessionFactory();
-//        return sessionFactory.openSession();
     }
 
     @Override

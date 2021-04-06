@@ -57,10 +57,6 @@ public class CandlepinExceptionMapper {
         MediaType.APPLICATION_ATOM_XML_TYPE
     );
 
-    // Use a provider so we get a scoped HttpServletRequest
-    // @Autowired
-    // private javax.inject.Provider<HttpServletRequest> requestProvider;
-
     @Autowired
     protected Provider<I18n> i18n;
 
@@ -69,9 +65,6 @@ public class CandlepinExceptionMapper {
 
 
     public MediaType determineBestMediaType() {
-        //HttpServletRequest request = requestProvider.get();
-//        HttpServletRequest request =
-//                ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         String header = request.getHeader(HttpHeaderNames.ACCEPT);
         MediaType mediaType = null;
 

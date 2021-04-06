@@ -87,7 +87,6 @@ public class ProductResource {
     private ModelTranslator translator;
     private JobManager jobManager;
 
-    //@Inject
     @Autowired
     public ProductResource(ProductCurator productCurator, OwnerCurator ownerCurator,
         ProductCertificateCurator productCertCurator, Configuration config, I18n i18n,

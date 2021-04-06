@@ -65,8 +65,6 @@ public class JobMessageReceiver {
     private MessageListener listener;
     private String filter;
     private Set<CPMSession> sessions;
-//    private UnitOfWork unitOfWork;
-
 
     /**
      * Creates a new job message receiver instance
@@ -83,12 +81,9 @@ public class JobMessageReceiver {
     @Inject
     public JobMessageReceiver(Configuration config, CPMSessionFactory cpmSessionFactory,
         ObjectMapper mapper) {
-
         this.config = Objects.requireNonNull(config);
         this.cpmSessionFactory = Objects.requireNonNull(cpmSessionFactory);
         this.mapper = Objects.requireNonNull(mapper);
-//        this.unitOfWork = Objects.requireNonNull(unitOfWork);
-
         this.initialized = false;
         this.suspended = false;
         this.sessions = new HashSet<>();
@@ -354,7 +349,6 @@ public class JobMessageReceiver {
 
         private final JobManager manager;
         private final ObjectMapper mapper;
-//        private final UnitOfWork unitOfWork;
 
         /**
          * Initializes a new message listener using the specified job manager to process
@@ -366,7 +360,6 @@ public class JobMessageReceiver {
         public MessageListener(JobManager manager, ObjectMapper mapper) {
             this.manager = Objects.requireNonNull(manager);
             this.mapper = Objects.requireNonNull(mapper);
-//            this.unitOfWork = Objects.requireNonNull(unitOfWork);
         }
 
         /**
@@ -387,8 +380,6 @@ public class JobMessageReceiver {
                 // Read the message and deserialize the data.
                 JobMessage jobMessage = this.mapper.readValue(message.getBody(), JobMessage.class);
                 log.debug("Deserialized job message: {}", jobMessage);
-
-//                this.unitOfWork.begin();
 
                 // Execute the job
                 AsyncJobStatus jobStatus = this.manager.executeJob(jobMessage);
@@ -484,9 +475,6 @@ public class JobMessageReceiver {
 
                 this.rollback(session);
             }
-            finally {
-//                this.unitOfWork.end();
-            }
         }
 
         private String serializeMessage(CPMMessage message) {
@@ -512,5 +500,4 @@ public class JobMessageReceiver {
             }
         }
     }
-
 }

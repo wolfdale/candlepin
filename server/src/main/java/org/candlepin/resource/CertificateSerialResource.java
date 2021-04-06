@@ -47,7 +47,6 @@ public class CertificateSerialResource {
     private CertificateSerialCurator certificateSerialCurator;
     private ModelTranslator translator;
 
-    //@Inject
     @Autowired
     public CertificateSerialResource(CertificateSerialCurator certificateSerialCurator,
         ModelTranslator translator) {

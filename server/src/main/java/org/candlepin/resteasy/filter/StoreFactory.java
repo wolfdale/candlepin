@@ -59,7 +59,6 @@ public class StoreFactory {
     private final Map<Class<? extends Persisted>, EntityStore<? extends Persisted>> storeMap =
         new HashMap<>();
 
-    //@Inject
     @Autowired
     public StoreFactory(Injector injector) {
         storeMap.put(Owner.class, new OwnerStore());

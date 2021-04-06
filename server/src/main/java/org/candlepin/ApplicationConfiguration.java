@@ -12,8 +12,8 @@
  *  granted to use or replicate Red Hat trademarks that are incorporated
  *  in this software or its documentation.
  */
-
 package org.candlepin;
+
 import static org.candlepin.config.ConfigProperties.ENCRYPTED_PROPERTIES;
 import static org.candlepin.config.ConfigProperties.PASSPHRASE_SECRET_FILE;
 
@@ -70,8 +70,6 @@ import java.nio.charset.Charset;
 import javax.servlet.ServletContext;
 import javax.sql.DataSource;
 
-
-
 @EnableGuiceModules
 @Configuration
 @EnableAspectJAutoProxy
@@ -81,10 +79,6 @@ import javax.sql.DataSource;
 public class ApplicationConfiguration  implements WebMvcConfigurer  {
     @Autowired
     private ServletContext servletContext;
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
 
     private org.candlepin.common.config.Configuration config;
 
@@ -108,11 +102,9 @@ public class ApplicationConfiguration  implements WebMvcConfigurer  {
     public org.candlepin.common.config.Configuration configuration() {
 
         try {
-            //log.info("Candlepin reading configuration.");
             config = readConfiguration(servletContext);
         }
         catch (ConfigurationException e) {
-            //log.error("Could not read configuration file.  Aborting initialization.", e);
             throw new RuntimeException(e);
         }
         return config;
@@ -129,10 +121,7 @@ public class ApplicationConfiguration  implements WebMvcConfigurer  {
         File configFile = new File(ConfigProperties.DEFAULT_CONFIG_FILE);
 
         if (configFile.canRead()) {
-            //log.debug("Loading system configuration");
-            // First, read the system configuration
             systemConfig.load(configFile);
-            //log.debug("System configuration: " + systemConfig);
         }
 
         systemConfig.use(PASSPHRASE_SECRET_FILE).toDecrypt(ENCRYPTED_PROPERTIES);
@@ -227,8 +216,6 @@ public class ApplicationConfiguration  implements WebMvcConfigurer  {
     }
 
     @Bean
-    //@Scope("request")
-    //@Scope(scopeName = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
     public EventSink eventSink(EventFilter eventFilter, EventFactory eventFactory,
                                ObjectMapper mapper, org.candlepin.common.config.Configuration config,
                                ActiveMQSessionFactory sessionFactory, CandlepinModeManager modeManager) throws ActiveMQException {

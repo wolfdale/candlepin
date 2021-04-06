@@ -33,23 +33,13 @@ import javax.servlet.ServletResponse;
 @Component
 @Order(2)
 public class CandlepinPersistFilter implements Filter {
-    //private UnitOfWork unitOfWork;
-
-    //@Inject
-//    @Autowired
-//    public CandlepinPersistFilter(UnitOfWork unitOfWork) {
-//        this.unitOfWork = unitOfWork;
-//    }
-
     @Override
     public void doFilter(ServletRequest request, ServletResponse response,
         FilterChain chain) throws IOException, ServletException {
-        //unitOfWork.begin();
         try {
             chain.doFilter(request, response);
         }
         finally {
-            //unitOfWork.end();
         }
     }
 

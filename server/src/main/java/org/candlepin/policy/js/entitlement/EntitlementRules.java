@@ -76,7 +76,6 @@ import java.util.stream.Stream;
  * Enforces entitlement rules for normal (non-manifest) consumers.
  */
 @Component
-//@Transactional
 public class EntitlementRules implements Enforcer {
     private static final Logger log = LoggerFactory.getLogger(EntitlementRules.class);
 
@@ -98,7 +97,6 @@ public class EntitlementRules implements Enforcer {
 
     private static final String POST_PREFIX = "post_";
 
-    //@Inject
     @Autowired
     public EntitlementRules(DateSource dateSource,
         JsRunner jsRules, I18n i18n, Configuration config, ConsumerCurator consumerCurator,

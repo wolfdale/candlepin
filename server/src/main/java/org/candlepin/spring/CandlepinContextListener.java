@@ -136,8 +136,6 @@ public class CandlepinContextListener implements ServletContextListener {
         setCapabilities(config);
         log.debug("Candlepin stored config on context.");
 
-        // set things up BEFORE calling the super class' initialize method.
-        //super.contextInitialized(sce);
         log.info("Candlepin context initialized.");
         try {
             this.initializeSubsystems();
@@ -176,11 +174,6 @@ public class CandlepinContextListener implements ServletContextListener {
         // Custom ModelConverter to handle our specific serialization requirements
         modelConverters.addConverter(candlepinSwaggerModelConverter);
 
-        /*if (config.getBoolean(ConfigProperties.KEYCLOAK_AUTHENTICATION)) {
-            CandlepinCapabilities capabilities = CandlepinCapabilities.getCapabilities();
-            capabilities.add(CandlepinCapabilities.KEYCLOAK_AUTH_CAPBILITY);
-        }*/
-
         // Init CRL file
         String filePath = getCrlFilePath();
         File crlFile = new File(filePath);
@@ -210,10 +203,6 @@ public class CandlepinContextListener implements ServletContextListener {
     private void destroySubsystems() throws Exception {
         // Tear down the job system
         this.jobManager.shutdown();
-
-        //injector.getInstance(PersistService.class).stop();
-        //persistService.stop();
-
         // deregister jdbc driver to avoid warning in tomcat shutdown log
         Enumeration<Driver> drivers = DriverManager.getDrivers();
         while (drivers.hasMoreElements()) {
@@ -229,10 +218,6 @@ public class CandlepinContextListener implements ServletContextListener {
         if (config.getBoolean(ACTIVEMQ_ENABLED)) {
             activeMQContextListener.contextDestroyed();
         }
-
-        // Make sure this is called after everything else, as other objects may rely on the
-        // messaging subsystem
-        //this.cpmContextListener.destroy();
 
         this.loggerListener.contextDestroyed();
     }
@@ -296,58 +281,9 @@ public class CandlepinContextListener implements ServletContextListener {
         return DatabaseConfigFactory.SupportedDatabase.POSTGRESQL;
     }
 
-//    @Override
     protected Stage getStage(ServletContext context) {
         return Stage.PRODUCTION;
     }
-
-    /**
-     * Returns a list of Guice modules to initialize.
-     * @return a list of Guice modules to initialize.
-     */
-//    @Override
-//    protected List<Module> getModules(ServletContext context) {
-//        List<Module> modules = new LinkedList<>();
-//
-//        modules.add(Modules.override(new DefaultConfig()).with(new CustomizableModules().load(config)));
-//
-//        modules.add(new AbstractModule() {
-//
-//            @Override
-//            protected void configure() {
-//                bind(org.candlepin.common.config.Configuration.class).toInstance(config);
-//            }
-//        });
-//
-//        modules.add(new CandlepinModule(config));
-//        modules.add(new CandlepinFilterModule(config));
-//
-//        return modules;
-//    }
-
-//    /**
-//     * There's no way to really get Guice to perform injections on stuff that
-//     * the JpaPersistModule is creating, so we resort to grabbing the EntityManagerFactory
-//     * after the fact and adding the Validation EventListener ourselves.
-//     * @param injector
-//     */
-//    private void insertValidationEventListeners(Injector injector) {
-//        javax.inject.Provider<EntityManagerFactory> emfProvider =
-//                injector.getProvider(EntityManagerFactory.class);
-//        HibernateEntityManagerFactory hibernateEntityManagerFactory =
-//                (HibernateEntityManagerFactory) emfProvider.get();
-//        SessionFactoryImpl sessionFactoryImpl =
-//                (SessionFactoryImpl) hibernateEntityManagerFactory.getSessionFactory();
-//        EventListenerRegistry registry =
-//                sessionFactoryImpl.getServiceRegistry().getService(EventListenerRegistry.class);
-//
-//        javax.inject.Provider<BeanValidationEventListener> listenerProvider =
-//                injector.getProvider(BeanValidationEventListener.class);
-//        registry.getEventListenerGroup(EventType.PRE_INSERT).appendListener(listenerProvider.get());
-//        registry.getEventListenerGroup(EventType.PRE_UPDATE).appendListener(listenerProvider.get());
-//        registry.getEventListenerGroup(EventType.PRE_DELETE).appendListener(listenerProvider.get());
-//    }
-
 
     private String getCrlFilePath() throws ConfigurationException {
         String filePath = config.getString(ConfigProperties.CRL_FILE_PATH);

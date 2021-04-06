@@ -210,7 +210,6 @@ public class OwnerResource {
     private ModelTranslator translator;
     private JobManager jobManager;
 
-    //@Inject
     @Autowired
     public OwnerResource(OwnerCurator ownerCurator,
         ActivationKeyCurator activationKeyCurator,

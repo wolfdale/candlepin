@@ -65,7 +65,6 @@ public class CdnResource {
     private CdnManager cdnManager;
     private ModelTranslator translator;
 
-    //@Inject
     @Autowired
     public CdnResource(I18n i18n, CdnCurator curator, CdnManager manager, ModelTranslator translator) {
         this.i18n = i18n;

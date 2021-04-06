@@ -60,8 +60,6 @@ import java.io.File;
 import java.io.PrintStream;
 import java.util.ArrayList;
 
-
-
 /**
  * Test suite for the StatusResource class
  */
@@ -71,7 +69,7 @@ public class StatusResourceTest {
 
     @Mock private RulesCurator rulesCurator;
     @Mock private Configuration config;
-    @Mock private JsRunnerFactory jsProvider;
+    @Mock private JsRunnerFactory jsRunnerFactory;
     @Mock private CandlepinCache candlepinCache;
     @Mock private StatusCache mockedStatusCache;
     @Mock private CandlepinModeManager modeManager;
@@ -100,7 +98,7 @@ public class StatusResourceTest {
     }
 
     private StatusResource createResource() {
-        return new StatusResource(this.rulesCurator, this.config, this.jsProvider, this.candlepinCache,
+        return new StatusResource(this.rulesCurator, this.config, this.jsRunnerFactory, this.candlepinCache,
             this.modeManager, this.keycloakConfig);
     }
 

@@ -69,7 +69,6 @@ public class PoolRules {
     public PoolRules(Configuration config, EntitlementCurator entCurator,
         OwnerProductCurator ownerProductCurator, ProductCurator productCurator) {
 
-//        this.poolManager = Objects.requireNonNull(poolManager);
         this.config = Objects.requireNonNull(config);
         this.entCurator = Objects.requireNonNull(entCurator);
         this.ownerProductCurator = Objects.requireNonNull(ownerProductCurator);

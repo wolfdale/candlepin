@@ -80,7 +80,6 @@ public class SubscriptionResource {
 
     private I18n i18n;
 
-    //@Inject
     @Autowired
     public SubscriptionResource(SubscriptionServiceAdapter subService,
         ConsumerCurator consumerCurator, PoolManager poolManager, ContentAccessManager contentAccessManager,

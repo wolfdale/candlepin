@@ -36,13 +36,13 @@ public class RulesImporter {
 
     private RulesCurator curator;
     private EventSink sink;
-    private JsRunnerFactory jsProvider;
+    private JsRunnerFactory jsRunnerFactory;
 
     @Inject
-    RulesImporter(RulesCurator curator, EventSink sink, JsRunnerFactory jsProvider) {
+    RulesImporter(RulesCurator curator, EventSink sink, JsRunnerFactory jsRunnerFactory) {
         this.curator = curator;
         this.sink = sink;
-        this.jsProvider = jsProvider;
+        this.jsRunnerFactory = jsRunnerFactory;
     }
 
     public void importObject(Reader reader) throws IOException {
@@ -58,7 +58,7 @@ public class RulesImporter {
             sink.emitRulesModified(existingRules, newRules);
 
             // Trigger a recompile of the rules:
-            jsProvider.compileRules();
+            jsRunnerFactory.compileRules();
         }
         else {
             log.info("Ignoring older rules in manifest, current version: " +

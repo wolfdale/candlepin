@@ -63,8 +63,6 @@ public class CrlResource {
     private PKIUtility pkiUtility;
     private CertificateSerialCurator certificateSerialCurator;
 
-
-    //@Inject
     @Autowired
     public CrlResource(Configuration config, CrlFileUtil crlFileUtil, PKIUtility pkiUtility,
         CertificateSerialCurator certificateSerialCurator) {

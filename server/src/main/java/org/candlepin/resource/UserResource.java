@@ -77,8 +77,6 @@ public class UserResource {
     private OwnerCurator ownerCurator;
     private ModelTranslator modelTranslator;
 
-
-    //@Inject
     @Autowired
     public UserResource(UserServiceAdapter userService, I18n i18n, OwnerCurator ownerCurator,
         ModelTranslator modelTranslator) {

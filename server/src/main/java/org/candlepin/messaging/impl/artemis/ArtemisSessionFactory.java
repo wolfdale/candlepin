@@ -123,9 +123,6 @@ public class ArtemisSessionFactory implements CPMSessionFactory {
 
 
     private Configuration config;
-
-    private CPMSessionConfig defaultSessionConfig;
-
     private boolean initialized;
     private ServerLocator locator;
     private SessionManager sessionManager;

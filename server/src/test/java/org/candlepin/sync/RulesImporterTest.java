@@ -47,12 +47,12 @@ public class RulesImporterTest extends DatabaseTestFixture {
     @Inject private EventSink sink;
 
     @Mock private RulesCurator curator;
-    @Mock private JsRunnerFactory jsProvider;
+    @Mock private JsRunnerFactory jsRunnerFactory;
     private RulesImporter importer;
 
     @BeforeEach
     public void setUp() {
-        importer = new RulesImporter(curator, sink, jsProvider);
+        importer = new RulesImporter(curator, sink, jsRunnerFactory);
     }
 
     @Test

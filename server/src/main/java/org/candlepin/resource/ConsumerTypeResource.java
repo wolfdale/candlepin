@@ -63,7 +63,6 @@ public class ConsumerTypeResource {
     private I18n i18n;
     private ModelTranslator translator;
 
-    //@Inject
     @Autowired
     public ConsumerTypeResource(ConsumerTypeCurator consumerTypeCurator, I18n i18n,
         ModelTranslator translator) {

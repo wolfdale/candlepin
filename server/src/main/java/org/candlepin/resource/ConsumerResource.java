@@ -234,7 +234,6 @@ public class ConsumerResource {
     private ModelTranslator translator;
     private JobManager jobManager;
 
-    //@Inject
     @Autowired
     @SuppressWarnings({"checkstyle:parameternumber"})
     public ConsumerResource(ConsumerCurator consumerCurator,

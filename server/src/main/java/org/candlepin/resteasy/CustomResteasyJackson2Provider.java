@@ -58,12 +58,6 @@ public class CustomResteasyJackson2Provider extends ResteasyJackson2Provider {
     @Autowired
     public CustomResteasyJackson2Provider(@Qualifier("springObjectMapper") ObjectMapper mapper,
         Configuration config) {
-
-        // TODO candlepin-spring: Below line of code has been copied from JsonProvider
-        // we need to find a way to migrate this fragment to ResteasyJackson2Provider
-
-        //super(Annotations.JACKSON, Annotations.JAXB);
-
         this.mapper = mapper;
         this.indentJson = config.getBoolean(ConfigProperties.PRETTY_PRINT);
 

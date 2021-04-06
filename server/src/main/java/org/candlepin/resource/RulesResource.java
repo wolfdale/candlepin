@@ -60,20 +60,19 @@ public class RulesResource {
     private EventSink sink;
     //private JsRunnerProvider jsProvider;
     /* TODO chnage the instance name to jsFactory */
-    private JsRunnerFactory jsProvider;
+    private JsRunnerFactory jsRunnerFactory;
 
     /**
      * Default ctor
      * @param rulesCurator Curator used to interact with Rules.
      */
-    //@Inject
     @Autowired
     public RulesResource(RulesCurator rulesCurator,
-        I18n i18n, EventSink sink, JsRunnerFactory jsProvider) {
+        I18n i18n, EventSink sink, JsRunnerFactory jsRunnerFactory) {
         this.rulesCurator = rulesCurator;
         this.i18n = i18n;
         this.sink = sink;
-        this.jsProvider = jsProvider;
+        this.jsRunnerFactory = jsRunnerFactory;
     }
 
     @ApiOperation(notes = "Uploads the Rules Returns a copy of the uploaded rules.", value = "upload")
@@ -104,7 +103,7 @@ public class RulesResource {
         sink.emitRulesModified(oldRules, rules);
 
         // Trigger a recompile of the JS rules so version/source are set correctly:
-        jsProvider.compileRules(true);
+        jsRunnerFactory.compileRules(true);
 
         return rulesBuffer;
     }
@@ -139,6 +138,6 @@ public class RulesResource {
         sink.emitRulesDeleted(deleteRules);
 
         // Trigger a recompile of the JS rules so version/source are set correctly:
-        jsProvider.compileRules(true);
+        jsRunnerFactory.compileRules(true);
     }
 }

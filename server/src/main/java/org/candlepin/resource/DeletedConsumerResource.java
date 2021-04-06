@@ -47,7 +47,6 @@ public class DeletedConsumerResource {
     private DeletedConsumerCurator deletedConsumerCurator;
     private ModelTranslator translator;
 
-    //@Inject
     @Autowired
     public DeletedConsumerResource(DeletedConsumerCurator deletedConsumerCurator,
         ModelTranslator translator) {

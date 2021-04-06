@@ -41,8 +41,6 @@ import javax.servlet.ServletResponse;
  * NOTE: It is important that this filter is the first to be processed.
  *
  */
-
-//@Singleton
 @Component
 @Order(1)
 public class CandlepinScopeFilter implements Filter {
@@ -65,12 +63,10 @@ public class CandlepinScopeFilter implements Filter {
             return;
         }
 
-        //requestScope.enter();
         try {
             chain.doFilter(request, response);
         }
         finally {
-            //requestScope.exit();
         }
     }
 

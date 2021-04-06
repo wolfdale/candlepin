@@ -70,7 +70,6 @@ public class RoleResource {
     private I18n i18n;
     private ModelTranslator modelTranslator;
 
-    //@Inject
     @Autowired
     public RoleResource(UserServiceAdapter userService, OwnerCurator ownerCurator,
         PermissionBlueprintCurator permCurator, I18n i18n, ModelTranslator modelTranslator) {

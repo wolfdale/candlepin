@@ -52,8 +52,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-
-
 /**
  * Status Resource
  */
@@ -76,19 +74,18 @@ public class StatusResource {
     private boolean standalone;
     private boolean keycloakEnabled;
     private RulesCurator rulesCurator;
-    private JsRunnerFactory jsProvider;
+    private JsRunnerFactory jsRunnerFactory;
     private CandlepinCache candlepinCache;
     private CandlepinModeManager modeManager;
     private KeycloakConfiguration keycloakConfig;
 
-    //@Inject
     @Autowired
-    public StatusResource(RulesCurator rulesCurator, Configuration config, JsRunnerFactory jsProvider,
+    public StatusResource(RulesCurator rulesCurator, Configuration config, JsRunnerFactory jsRunnerFactory,
         CandlepinCache candlepinCache, CandlepinModeManager modeManager,
         KeycloakConfiguration keycloakConfig) {
 
         this.rulesCurator = Objects.requireNonNull(rulesCurator);
-        this.jsProvider = Objects.requireNonNull(jsProvider);
+        this.jsRunnerFactory = Objects.requireNonNull(jsRunnerFactory);
         this.candlepinCache = Objects.requireNonNull(candlepinCache);
         this.modeManager = Objects.requireNonNull(modeManager);
         this.keycloakConfig = Objects.requireNonNull(keycloakConfig);
@@ -141,7 +138,7 @@ public class StatusResource {
         }
 
         CandlepinCapabilities caps = CandlepinCapabilities.getCapabilities();
-        RulesSourceEnum rulesSource = this.jsProvider.getRulesSource();
+        RulesSourceEnum rulesSource = this.jsRunnerFactory.getRulesSource();
 
         /*
          * Originally this was used to indicate database connectivity being good/bad.
@@ -180,7 +177,7 @@ public class StatusResource {
             .setVersion(version)
             .setRelease(release)
             .setStandalone(standalone)
-            .setRulesVersion(jsProvider.getRulesVersion())
+            .setRulesVersion(jsRunnerFactory.getRulesVersion())
             .setRulesSource(rulesSource != null ? rulesSource.toString() : null)
             .setMode(mode != null ? mode.toString() : null)
             .setModeReason(mcr != null ? mcr.toString() : null)

@@ -68,7 +68,6 @@ public class ContentResource {
     private OwnerCurator ownerCurator;
     private ModelTranslator modelTranslator;
 
-    //@Inject
     @Autowired
     public ContentResource(ContentCurator contentCurator, I18n i18n, UniqueIdGenerator idGenerator,
         EnvironmentContentCurator envContentCurator, PoolManager poolManager,

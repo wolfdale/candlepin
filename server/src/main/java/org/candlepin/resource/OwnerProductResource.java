@@ -97,7 +97,6 @@ public class OwnerProductResource {
     private ModelTranslator translator;
     private JobManager jobManager;
 
-    //@Inject
     @Autowired
     public OwnerProductResource(Configuration config, I18n i18n, OwnerCurator ownerCurator,
         OwnerContentCurator ownerContentCurator, OwnerProductCurator ownerProductCurator,

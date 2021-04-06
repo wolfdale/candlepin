@@ -56,7 +56,6 @@ public class EventFilter implements Filter {
         // EventSink must get injected here instead of in the constructor
         // because on creation of the filter we will be out of the
         // CandlepinRequestScope as the filter must be a singleton.
-        //EventSink eventSink = injector.getInstance(EventSink.class);
         TeeHttpServletResponse resp = new TeeHttpServletResponse((HttpServletResponse) response);
         chain.doFilter(request, resp);
         Status status = Status.fromStatusCode(resp.getStatus());
